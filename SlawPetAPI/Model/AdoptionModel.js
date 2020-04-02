@@ -1,4 +1,5 @@
 const sql = require("../Config/config");
+var fs = require('fs');
 
 const Adoption = function (adoption) {
     this.account_id = adoption.account_id;
@@ -23,7 +24,6 @@ Adoption.create = (newAdoption, result) => {
             return;
         }
 
-        console.log("posted adoption: ", { id: res.insertId, ...newAdoption });
         result(null, {
             "status": "success",
             "code": "200",
@@ -42,7 +42,6 @@ Adoption.getAll = result => {
             return;
         }
 
-        console.log("adobtiones: ", res);
         result(null, res);
     });
 
@@ -57,7 +56,6 @@ Adoption.findByid = (id, result) => {
         }
 
         if (res.length) {
-            console.log("adobtin: ", res[0]);
             result(null, res[0]);
             return;
         }
@@ -72,7 +70,6 @@ Adoption.findByCity = (city, result) => {
             return;
         }
         if (res.length) {
-            console.log("adoptioin in : ", res);
             result(null, res);
             return;
         }
@@ -88,7 +85,6 @@ Adoption.findByPet = (pet, result) => {
         }
 
         if (res.length) {
-            console.log("found adoptiones: ", res);
             result(null, res);
             return;
         }
@@ -105,7 +101,6 @@ Adoption.findByPetandCity = (pet, city, result) => {
         }
 
         if (res.length) {
-            console.log("found adoptiones: ", res);
             result(null, res);
             return;
         }
@@ -120,8 +115,6 @@ Adoption.findByOrg = (org_id, result) => {
             result(null, err);
             return;
         }
-
-        console.log("adoptiones: ", res);
         result(null, res);
 
     }
@@ -146,7 +139,7 @@ Adoption.myAdoptions = (req, result) => {
 };
 
 Adoption.myAdoptionsByID = (req, result) => {
-    sql.query("select adoption.`account_id`,adoption.`adoption_id`,adoption.`img`,adoption.`name` as title,adoption.`age`,adoption.`gender`,adoption.`city`,adoption.`pet`,adoption.`content`,adoption.`date`,adoption.`status`,user.name as owner,user.profile from user INNER JOIN adoption on adoption.account_id=user.account_id and adoption.adoption_id=? ",req.body.Adoption_id, (err, res) => {
+    sql.query("select adoption.`account_id`,adoption.`adoption_id`,adoption.`img`,adoption.`name` as title,adoption.`age`,adoption.`gender`,adoption.`city`,adoption.`pet`,adoption.`content`,adoption.`date`,adoption.`status`,user.name as owner,user.profile from user INNER JOIN adoption on adoption.account_id=user.account_id and adoption.adoption_id=? ", req.body.Adoption_id, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -160,29 +153,34 @@ Adoption.myAdoptionsByID = (req, result) => {
 
 };
 
-Adoption.deleteAdoption = (req,result) => {
-    sql.query("delete from adoption where adoption_id = ? and account_id=?", [req.body.Adoption_id,req.decoded.id], (err, res) => {
+Adoption.deleteAdoption = (req, result) => {
+    sql.query("delete from adoption where adoption_id = ? and account_id=?", [req.body.Adoption_id, req.decoded.id], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
             return;
         }
-        result(null, {"message":"deleted"});
-
+        else {
+            fs.unlink('./images/'+req.body.img, function (err) {
+                if (err) throw err;
+                console.log('File deleted!');
+            });
+            
+            result(null, { "message": "deleted" });
+        }
     }
-
     );
 
 };
 
-Adoption.ask = (req,result) => {
-    sql.query("insert into adopted (account_id,adoption_id,org_id) values(?,?,?); update adoption set status=1 where adoption_id=?", [req.decoded.id,req.body.Adoption_id,req.body.org_id,req.body.Adoption_id], (err, res) => {
+Adoption.ask = (req, result) => {
+    sql.query("insert into adopted (account_id,adoption_id,org_id) values(?,?,?); update adoption set status=1 where adoption_id=?", [req.decoded.id, req.body.Adoption_id, req.body.org_id, req.body.Adoption_id], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
             return;
         }
-        result(null, {"message":"Adopted"});
+        result(null, { "message": "Adopted" });
 
     }
 

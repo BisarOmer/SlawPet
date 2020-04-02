@@ -29,6 +29,10 @@ export default class Adobt extends Component {
          await this._retrieveData();
     }
 
+    _unsubscribe = this.props.navigation.addListener('focus', async () => {
+        await this._retrieveData();
+    });
+
     _retrieveData = async () => {
         try {
             var token = await AsyncStorage.getItem('auth_Token');
@@ -58,6 +62,10 @@ export default class Adobt extends Component {
                 console.error(error);
             });
     };
+
+    componentWillUnmount() {
+        this._unsubscribe();
+    }
 
     render() {
         return (

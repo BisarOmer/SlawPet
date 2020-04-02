@@ -6,7 +6,6 @@ import { render } from 'react-dom';
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn';
 import Colors from '../constants/Colors';
-import { useSafeArea } from 'react-native-safe-area-context';
 import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 
@@ -51,7 +50,7 @@ export default function LoginScreen({ navigation }) {
         }
 
         else {
-            return fetch(api + '/signin', {
+            fetch(api + '/signin', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -75,23 +74,22 @@ export default function LoginScreen({ navigation }) {
 
                             //storing token
                             _storeData = async () => {
+                                
                                 try {
                                     await AsyncStorage.setItem('auth_Token', responseJson.token);
                                     await AsyncStorage.setItem('AccountType', responseJson.AccountType);
+                                    await AsyncStorage.setItem('Acco_id', String(responseJson.account_id));
                                 } catch (error) {
                                     console.log(error);
                                 }
 
                             };
-
                             _storeData();
                             navigation.navigate('Home');
-
+                           
 
                         }
                     }
-
-
                 })
                 .catch((error) => {
                     console.error(error);
@@ -119,7 +117,7 @@ export default function LoginScreen({ navigation }) {
 
             <View style={{ marginTop: '6%', margin: '20%' }}>
                 <CustBtn title="Login" onpress={login} BgColor={Colors.primaryBtnBG} />
-                <Text style={styles.normalText}>or Create Account</Text>
+                <Text style={styles.normalText}>Create Account</Text>
                 <CustBtn title="Register" onpress={() => navigation.navigate('Register')} BgColor="#000" />
             </View>
         </SafeAreaView>

@@ -14,35 +14,37 @@ Comment.postComment = (comment, result) => {
             result(err, null);
             return;
         }
-        result(null, { id: res.insertId, ...comment });
+        result(null, {"message":"happy commenting" });
     });
 };
 
 Comment.commentByAdobtion = (adobtion_id, result) => {
-    sql.query("SELECT comment.`adoption_id`,comment.`comment_id`,comment.`content`, user.name ,user.profile from user INNER JOIN comment on user.account_id=comment.account_id where comment.`adoption_id`=?", adobtion_id, (err, res) => {
+    sql.query("SELECT comment.`adoption_id`,comment.`comment_id`,comment.`content`, user.name ,user.profile,user.account_id from user INNER JOIN comment on user.account_id=comment.account_id where comment.`adoption_id`=?", adobtion_id, (err, res) => {
         if (err) {
             result(null, err);
             return;
         }
         if (res.length) {
-            result(null, res);
+            result(null,{"status":"true",res});
+            return;
+        }
+
+        else{
+            result(null, {"status":"false","message":"No Comment"});
             return;
         }
     });
 };
 
-Comment.deleteComment=(commentid,result)=>{
-    sql.query("delete from  comment where comment_id = ?", commentid, (err, res) => {
+Comment.deleteComment=(req,result)=>{
+    sql.query("delete from  comment where comment_id = ? and account_id= ?", [req.body.comment_id,req.decoded.id], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
             return;
         }
-        result({ message: `comment was deleted successfully!` });
-    });
+        result({ message: `comment  deleted successfully!` });
+    });    
 };
-
-
-
 
 module.exports = Comment;

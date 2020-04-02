@@ -12,7 +12,6 @@ Org.about = (id, result) => {
             return;
         }
         if (res.length) {
-            console.log("found about org: ", res[0]);
             result(null, res[0]);
             return;
           }
@@ -29,7 +28,6 @@ Org.donate=(id,result)=>{
             return;
         }
         if (res.length) {
-            console.log("found donate org: ", res[0]);
             result(null, res[0]);
             return;
           }
@@ -39,18 +37,61 @@ Org.donate=(id,result)=>{
 
 }
 
-Org.adopted=(id,result)=>{
-    sql.query("select org_id,account_id,adoption_id,date from adopted where org_id =?",id,(err,res)=>{
+Org.adopted=(req,result)=>{
+    sql.query("select adopted.org_id,adopted.account_id,adopted.adoption_id,adopted.date,user.name as asker,user.profile from user INNER JOIN adopted on adopted.account_id=user.account_id and adopted.org_id=? and status!=1",req.decoded.id,(err,res)=>{
         if (err) {
             console.log("error: ", err)
             result(null, err);
             return;
         }
+        else if (res.length) {
+            result(null, res);
+            return;
+          }
+          else{
+              result(null,{"status":false,"messege":"No ask to show"})
+          }
+    });
+};
+
+Org.viewAsk=(req,result)=>{
+    sql.query("select adoption.adoption_id,adoption.name,adoption.img, user.name as asker,user.profile,user.phoneNumber,adopted.account_id,adopted.adoption_id"
+               +" from adopted INNER JOIN adoption on adoption.adoption_id=adopted.adoption_id  inner join user on user.account_id=adopted.account_id where adoption.adoption_id=? and adopted.org_id=?",[req.body.Adoption_id,req.decoded.id],(err,res)=>{
+        if (err) {
+            result(null, err);
+            return;
+        }
         if (res.length) {
-            console.log("found donate org: ", res[0]);
             result(null, res[0]);
             return;
           }
+    });
+};
+
+Org.give=(req,result)=>{
+    sql.query("update adopted set status = 1 where adoption_id=? and org_id=? ",[req.body.Adoption_id,req.decoded.id],(err,res)=>{
+        if (err) {
+            result(null, err);
+            return;
+        }
+        else{
+            result(null, {"status":true,"messege":"Adopted by"});
+            return;
+        }
+    });
+};
+
+Org.cancel=(req,result)=>{
+    sql.query("delete from adopted  where adoption_id=? and org_id=? ; update adoption set status = 0 where adoption_id=? and account_id=? ",[req.body.Adoption_id,req.decoded.id,req.body.Adoption_id,req.decoded.id],(err,res)=>{
+        if (err) {
+            result(null, err);
+            return;
+        }
+        else{
+            result(null, {"status":true,"messege":"canceled"});
+            return;
+
+        }
     });
 };
 

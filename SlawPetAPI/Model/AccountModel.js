@@ -52,8 +52,6 @@ Account.OrgAll = result => {
       result(null, err);
       return;
     }
-
-    console.log("adobtiones: ", res);
     result(null, res);
   });
 
@@ -67,7 +65,6 @@ Account.OrgByid = (id, result) => {
       return;
     }
     if (res.length) {
-      console.log("found customer: ", res[0]);
       result(null, res[0]);
       return;
     }
@@ -75,14 +72,13 @@ Account.OrgByid = (id, result) => {
 };
 
 Account.OrgByName = (name, result) => {
-  sql.query("SELECT user.account_id,name,profile FROM `user` inner join organization as org on user.account_id=org.account_id  where user.name like ?", name+"%", (err, res) => {
+  sql.query("SELECT user.account_id,name,profile FROM `user` inner join organization as org on user.account_id=org.account_id  where user.name like ?", name + "%", (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
       return;
     }
     if (res.length) {
-      console.log("found customer: ", res[0]);
       result(null, res[0]);
       return;
     }
@@ -108,7 +104,7 @@ Account.signin = (req, result) => {
 
         else {
           var token = jwt.sign({ id: res[0].account_id }, 'biisar123', { expiresIn: "7 days" });
-          result(null, { "status": true, "token": token, "AccountType": res[0].accType });
+          result(null, { "status": true, "token": token, "AccountType": res[0].accType,"account_id":res[0].account_id });
           return;
         }
 

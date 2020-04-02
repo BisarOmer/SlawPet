@@ -3,7 +3,8 @@ var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : '',
-  database : 'slawpet'
+  database : 'slawpet',
+  multipleStatements: true
 });
 
 connection.connect();

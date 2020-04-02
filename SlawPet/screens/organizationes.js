@@ -1,18 +1,12 @@
-// import * as React from 'react';
 import React, { Component } from 'react';
-import { useState, useEffect } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Picker, FlatList, Button, TouchableHighlightBase } from 'react-native';
-// import { Component } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import * as WebBrowser from 'expo-web-browser';
-
 import { MonoText } from '../components/StyledText';
 import { Ionicons } from '@expo/vector-icons';
 import { render } from 'react-dom';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustTxtInput from '../components/CustTxtInput'
-import defaultOrg from '../assets/images/account.png';
-
 import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
@@ -35,7 +29,6 @@ class Organizationes extends Component {
     };
 
     fetchData = async () => {
-
         fetch(api + '/organization',
             {
                 method: 'GET',
@@ -102,7 +95,7 @@ class Organizationes extends Component {
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('Organization Profile', { id: item.account_id })} >
                                 <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
                                     <Image
-                                        style={{ width: 50, height: 50, }}
+                                        style={{ width: 50, height: 50, backgroundColor: "#ccf0e1"  }}
                                         borderRadius={100}
                                         source={{ uri: imageuri + item.profile }}
                                     />
@@ -120,8 +113,6 @@ class Organizationes extends Component {
         );
     }
 };
-
-
 
 export default Organizationes
 

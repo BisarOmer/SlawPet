@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import * as WebBrowser from 'expo-web-browser';
 import { FlatGrid } from 'react-native-super-grid';
 import { MonoText } from '../components/StyledText';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 import { AsyncStorage } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 export default class Adobtion extends Component {
 
@@ -20,6 +18,13 @@ export default class Adobtion extends Component {
         }
     }
 
+    componentDidMount = async () => {
+        await this._retrieveData();
+    };
+
+    _unsubscribe = this.props.navigation.addListener('focus', async () => {
+        await this._retrieveData();
+    });
 
     _retrieveData = async () => {
         try {
@@ -53,15 +58,11 @@ export default class Adobtion extends Component {
             });
     };
 
-
-    componentDidMount = async () => {
-        await this._retrieveData();
-    };
-
-
+    componentWillUnmount() {
+        this._unsubscribe();
+    }
 
     render() {
-
         return (
             <SafeAreaView style={styles.container}>
                 <View style={{ marginLeft: "5%" }} >
@@ -91,6 +92,7 @@ export default class Adobtion extends Component {
                                     />
                                     <MonoText>{item.name}</MonoText>
                                     <Text>{item.city}</Text>
+                                    {item.status==1?<Text style={{color:"#18F879"}}>Adopted</Text>:null}
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -101,7 +103,6 @@ export default class Adobtion extends Component {
 
     }
 };
-
 
 const styles = StyleSheet.create({
     container: {

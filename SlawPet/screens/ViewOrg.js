@@ -6,14 +6,12 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn'
 import Colors from '../constants/Colors';
-import DefaultProfile from '../assets/images/account.png';
 import { MonoText } from '../components/StyledText';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import About from './About';
 import OrgAdoption from './OrgAdoptions';
 import Donate from './Donate';
-
 import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';

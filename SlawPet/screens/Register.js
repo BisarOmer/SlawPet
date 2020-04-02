@@ -40,8 +40,8 @@ export default function Register({ navigation }) {
 
     function registerUSer() {
 
-       var validEmail = validate({ from: email }, constraints);
-        
+        var validEmail = validate({ from: email }, constraints);
+
 
         if (name == null || email == null || password == null || phoneNumber == null) {
             setnotfilled(true);
@@ -52,12 +52,12 @@ export default function Register({ navigation }) {
         else if (validEmail !== undefined) {
             setErroremail(true);
             setnotfilled(false);
- 
-            
+
+
         }
 
         else {
-            return fetch(api+'/register', {
+            fetch(api + '/register', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -78,7 +78,7 @@ export default function Register({ navigation }) {
                 .then((responseJson) => {
                     if (responseJson) {
                         if (!responseJson.status) {
-                               Alert.alert(responseJson.message);
+                            Alert.alert(responseJson.message);
                         }
                     }
                 })
@@ -106,17 +106,17 @@ export default function Register({ navigation }) {
                         setAccType(itemValue)
                     }
                     style={styles.picker}>
-                    <Picker.Item label="User" value="user" />
+                    <Picker.Item label="User" value="User" />
                     <Picker.Item label="Organiazation" value="Organization" />
                 </Picker>
 
                 <Text style={{ color: "#fa163f" }}>{notFilled ? "Fill All Inputs" : null}</Text>
                 <Text style={{ color: "#fa163f" }}>{emailError ? "Invalid Email" : null}</Text>
-               
+
 
             </View>
 
-            <View style={{ marginLeft: '10%',marginRight:'10%' }}>
+            <View style={{ marginLeft: '10%', marginRight: '10%' }}>
                 <CustBtn onpress={registerUSer} title="Create" BgColor={Colors.primaryBtnBG} />
             </View>
 

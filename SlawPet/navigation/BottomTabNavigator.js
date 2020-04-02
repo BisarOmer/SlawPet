@@ -18,25 +18,27 @@ const INITIAL_ROUTE_NAME = isuser ? 'Home' : "Ask";
 
 export default function BottomTabNavigator({ navigation, route }) {
 
-  
+
   const [AccountType, setAccType] = useState();
-  const [Token,setToken] =useState();
-
-    //retrive data
-    _retrieveData = async () => {
-      try {   
-        const token = await AsyncStorage.getItem('auth_Token');
-        const accType =  await AsyncStorage.getItem('AccountType');
-
-        setAccType(accType);
-        setToken(token);
- 
-      } catch (error) {
-          console.log(error);
-      }
-  };
-  _retrieveData();             
+  const [Token, setToken] = useState();
+  const[loaded,setLoaded]=useState(false)
   
+  //retrive data
+  _retrieveData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('auth_Token');
+      const accType = await AsyncStorage.getItem('AccountType');
+
+      setAccType(accType);
+      setToken(token);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  this._retrieveData();
+
   navigation.setOptions({ headerTitle: getHeaderTitle(route) });
 
   function firstTabByAcc() {
@@ -49,6 +51,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           options={{
             title: 'Ask',
             tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-send" />,
+
           }}
         />
       );
@@ -61,7 +64,6 @@ export default function BottomTabNavigator({ navigation, route }) {
           component={HomeScreen}
           style={{ backgroudcolor: '#00000' }}
           options={{
-
             title: 'Home',
             tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-home" />,
           }}
@@ -73,7 +75,7 @@ export default function BottomTabNavigator({ navigation, route }) {
     if (AccountType == 'Organization') {
       return (
         <BottomTab.Screen
-          name="Adoption"
+          name="My Adoption"
           component={MyAdoptions}
           options={{
             title: 'My Adoption',
@@ -96,9 +98,8 @@ export default function BottomTabNavigator({ navigation, route }) {
       );
     }
   }
-
   function isLogged() {
-    if (Token!=null) {
+    if (Token != null) {
       return (
         <BottomTab.Screen
           name="Profile"
@@ -127,7 +128,15 @@ export default function BottomTabNavigator({ navigation, route }) {
   }
 
   return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}
+    tabBarOptions={{
+       activeTintColor: '#18F879',
+       inactiveTintColor: 'grey',
+       style:{
+         fontFamily:"Segoe UI"
+       }
+    }}>
+
 
       {firstTabByAcc()}
 
@@ -154,7 +163,7 @@ function getHeaderTitle(route) {
       return 'Ask';
     case 'My Adoption':
       return 'My Adoption';
-      case 'Login':
+    case 'Login':
       return 'Login';
   }
 }

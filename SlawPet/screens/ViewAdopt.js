@@ -4,7 +4,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as WebBrowser from 'expo-web-browser';
 import { SectionGrid } from 'react-native-super-grid';
 import { MonoText } from '../components/StyledText';
-import defaultOrg from '../assets/images/account.png';
 import CustBtn from '../components/CustBtn';
 import CustTxtInput from '../components/CustTxtInput';
 import Colors from '../constants/Colors';
@@ -12,7 +11,7 @@ import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 
-export default class ViewAdopt extends Component {
+export default class ViewAdopt extends  React.Component {
 
     constructor(props) {
         super(props);
@@ -20,16 +19,19 @@ export default class ViewAdopt extends Component {
             Token: this.props.route.params.Token,
             Adoption_id: this.props.route.params.Adoption_id,
             TypeUser: this.props.route.params.TypeUser,
+            Account_id: "",
             AdoptionData: {},
-            Comments:{},
-
+            Comments: {},
             content: "",
 
-        }
 
+        }
+        this.myRef = React.createRef();
         this.deleteAdoption = this.deleteAdoption.bind(this);
         this.postComment = this.postComment.bind(this);
+        this.deleteComment = this.deleteComment.bind(this);
         this.ask = this.ask.bind(this);
+        this.askReq = this.askReq.bind(this);
     }
 
     componentDidMount = async () => {
@@ -38,7 +40,8 @@ export default class ViewAdopt extends Component {
 
     _retrieveData = async () => {
         try {
-            var value = await AsyncStorage.getItem('AccountType');
+            var value = await AsyncStorage.getItem('Acco_id');
+            this.setState({ Account_id: value });
         } catch (error) {
             console.log(error)
         }
@@ -92,23 +95,36 @@ export default class ViewAdopt extends Component {
         }
     };
 
-    fetchComments = async()=>{
-        
-            fetch(api + '/comment/'+this.state.Adoption_id,
-                {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    this.setState({Comments: responseJson });
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+    fetchComments = async () => {
+
+        fetch(api + '/comment/' + this.state.Adoption_id,
+            {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if (responseJson.status == "true")
+                    this.setState({ Comments: responseJson.res });
+                else if (responseJson.status == "false") {
+                    const defaultComment = {
+                        "comment_id": 0,
+                        "content": "Hope soon this soul get Comment ",
+                        "name": "No Comment",
+                        "profile": "default.png"
+                    }
+                    var arr = []
+                    arr.push(defaultComment)
+                    this.setState({ Comments: arr })
+                }
+
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     deleteAdoption() {
@@ -121,21 +137,14 @@ export default class ViewAdopt extends Component {
                     'x-access-token': this.state.Token,
                 },
                 body: JSON.stringify({
-                    Adoption_id: this.state.Adoption_id
+                    Adoption_id: this.state.Adoption_id,
+                    img: this.state.AdoptionData.img
                 })
-            })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                if (responseJson) {
-                    Alert.alert(responseJson.message);
-                }
             })
             .catch((error) => {
                 console.error(error);
             });
-
-        this.props.navigation.navigate("MyAdoptions");
-
+        this.props.navigation.goBack();
     }
 
     postComment() {
@@ -153,16 +162,11 @@ export default class ViewAdopt extends Component {
                         content: this.state.content
                     })
                 })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    if (responseJson) {
-                        Alert.alert(responseJson.message);
-                    }
-                })
                 .catch((error) => {
                     console.error(error);
                 });
-
+            this.myRef.current.clear();
+            this._retrieveData()
         }
         else {
             Alert.alert("Comment is Empty")
@@ -170,43 +174,51 @@ export default class ViewAdopt extends Component {
 
     }
 
-    ask(){
-        if(this.state.Token!=undefined){
+    askReq() {
         fetch(api + '/ask',
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'x-access-token': this.state.Token,
-            },
-            body: JSON.stringify({
-                Adoption_id: this.state.Adoption_id,
-                org_id:this.state.AdoptionData.account_id
+            {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'x-access-token': this.state.Token,
+                },
+                body: JSON.stringify({
+                    Adoption_id: this.state.Adoption_id,
+                    org_id: this.state.AdoptionData.account_id
+                })
             })
-        })
-        .then((response) => response.json())
-        .then((responseJson) => {
-            Alert.alert(responseJson.message);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-
-        this.props.navigation.navigate("Home");
+            .then((response) => response.json())
+            .then((responseJson) => {
+                Alert.alert(responseJson.message);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        this.props.navigation.goBack();
     }
-    else{
-        Alert.alert("Please Login or Create Account");
-    }
+    ask() {
+        if (this.state.Token != undefined) {
+            Alert.alert(
+                'Adopting',
+                'You have responsibility to save and love this soul',
+                [
+                    { text: 'Cancel', style: 'cancel', },
+                    { text: 'Yes', onPress: () => this.askReq() },
+                ],
+                { cancelable: false }
+            )
+        }
+        else {
+            Alert.alert("Please Login or Create Account");
+        }
     }
 
     commentSection() {
-       
-        if (this.state.Token) {
+        if (this.state.Token != null) {
             return (
                 <View>
-                    <MonoText>Commments</MonoText>
-                    <CustTxtInput placeholder="Write Here" onChangeText={(content) => { this.setState({ content: content }) }} />
+                    <CustTxtInput placeholder="Your Comment" onChangeText={(content) => { this.setState({ content: content }) }} />
                     <View style={{ padding: 25 }}><CustBtn title="Post" onpress={this.postComment} /></View>
                 </View>
             );
@@ -214,7 +226,7 @@ export default class ViewAdopt extends Component {
     }
 
     header() {
-        
+
         const AdoptionData = this.state.AdoptionData
         const items = [
             { name: 'Gender', code: AdoptionData.gender },
@@ -241,7 +253,7 @@ export default class ViewAdopt extends Component {
                                 borderRadius={100}
                                 source={{ uri: imageuri + AdoptionData.profile }}
                             />
-                            <MonoText style={{ marginLeft:"4%"}}>{AdoptionData.owner}</MonoText>
+                            <MonoText style={{ marginLeft: "4%" }}>{AdoptionData.owner}</MonoText>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -275,14 +287,45 @@ export default class ViewAdopt extends Component {
                 <View style={{ margin: '3%', padding: 10 }}>
                     {/* //btns */}
                     {this.state.TypeUser == "owner" ? <CustBtn title="Delete" BgColor={"#fa163f"} onpress={this.deleteAdoption} /> : null}
-                    {this.state.TypeUser == "user" ? <CustBtn title="Adobt" BgColor={Colors.primaryBtnBG} onpress={this.ask}/> : null}
+                    {this.state.TypeUser == "user" ? <CustBtn title="Adobt" BgColor={Colors.primaryBtnBG} onpress={this.ask} /> : null}
                 </View>
-
                 {this.commentSection()}
-
-
+                <MonoText>Comments</MonoText>
+                
+               
             </View>
         );
+    }
+
+    deleteCommentReq(comment_id) {
+        fetch(api + '/comment',
+            {
+                method: 'Delete',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'x-access-token': this.state.Token,
+                },
+                body: JSON.stringify({
+                    comment_id: comment_id
+                })
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        this.fetchComments()
+    }
+
+    deleteComment(comment_id) {
+        Alert.alert(
+            'Deleting Comment',
+            'After deleting this comment you can not restore it',
+            [
+                { text: 'Cancel', style: 'cancel', },
+                { text: 'Yes', onPress: () => this.deleteCommentReq(comment_id) },
+            ],
+            { cancelable: false }
+        )
     }
 
     render() {
@@ -293,21 +336,20 @@ export default class ViewAdopt extends Component {
                     data={this.state.Comments}
                     keyExtractor={item => String(item.comment_id)}
                     renderItem={({ item }) =>
-                        <TouchableOpacity style={{ marginTop: 10 }} >
+                        <TouchableOpacity style={{ marginTop: 10 }} onPress={() => { item.account_id == this.state.Account_id ? this.deleteComment(item.comment_id) : null }} >
                             <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
                                 <Image
                                     style={{ width: 50, height: 50, }}
                                     borderRadius={100}
                                     source={{ uri: imageuri + item.profile }}
                                 />
-                                <MonoText style={{ marginLeft:"4%" }}>{item.name}</MonoText>
+                                <MonoText style={{ marginLeft: "4%" }}>{item.name}</MonoText>
                             </View>
                             <MonoText style={styles.comment}>{item.content}</MonoText>
                         </TouchableOpacity>
                     }
                     style={{ margin: "3%" }}
                 />
-
             </SafeAreaView >
         );
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Button, Alert, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -45,6 +45,8 @@ export default class Profile extends Component {
 
             notFilled: false,
             emailError: false,
+
+            refreshing: false,
 
         };
 
@@ -131,6 +133,13 @@ export default class Profile extends Component {
         }
     };
 
+    _onRefresh = () => {
+        this.setState({ refreshing: true });
+        this.fetchData().then(() => {
+            this.setState({ refreshing: false });
+        });
+    }
+
     handleUploadPhoto = async (photo, routName) => {
         console.log(routName);
         const photoData = {
@@ -180,7 +189,7 @@ export default class Profile extends Component {
                     }))
                 }
 
-                else if(routName=="/upload/Donate"){
+                else if (routName == "/upload/Donate") {
                     this.setState(prevState => ({
                         OrganizationData: {
                             ...prevState.OrganizationData,
@@ -245,8 +254,8 @@ export default class Profile extends Component {
     };
 
     loggedOut() {
-        this.props.navigation.navigate('Home');
         this._deleteToken();
+        this.props.navigation.goBack();
     };
 
     componentDidMount = async () => {
@@ -303,8 +312,8 @@ export default class Profile extends Component {
 
     updatePassword() {
 
-        if (this.state.newPassword = "") {
-            this.setState({ notFilled: true })
+        if (this.state.newPassword == "") {
+            Alert.alert("set new password")
         }
         else {
             fetch(api + '/updatepassword', {
@@ -372,7 +381,8 @@ export default class Profile extends Component {
     render() {
 
         return (
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/> } >
 
                 <View style={styles.viewShadow}>
                     <Image

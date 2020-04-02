@@ -7,8 +7,6 @@ module.exports = function (app) {
   const authToken = require("./Config/AuthToken");
 
 
-
-
   // define multer storage configuration  
   const multer = require('multer');
   const storage = multer.diskStorage({
@@ -22,7 +20,17 @@ module.exports = function (app) {
       callback(null, name);
     }
   });
-  const upload = multer({ storage: storage });
+  const upload = multer({ 
+    storage: storage ,
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+        cb(null, true);
+      } else {
+        cb(null, false);
+        return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+      }
+    }
+  });
 
 
   //Account
@@ -46,7 +54,6 @@ module.exports = function (app) {
   app.post('/upload/AdoptionImage', authToken.authToken, upload.single('photo'), AccountController.upload);
 
   //organization
-  app.get("/organization/adobted/:id", OrgController.adopted);
   app.get("/organization/about/:id", OrgController.about);
   app.get("/organization/donate/:id", OrgController.donate);
 
@@ -64,6 +71,10 @@ module.exports = function (app) {
   
   //ask
   app.post("/ask",authToken.authToken,AdoptionController.ask)
+  app.post("/organization/adobted",authToken.authToken,OrgController.adopted)
+  app.post("/organization/viewAsk",authToken.authToken,OrgController.viewAsk)
+  app.post("/give",authToken.authToken,OrgController.give)
+  app.post("/cancel",authToken.authToken,OrgController.cancel)
 
   //delete adoption
   app.delete("/adoption/delete",authToken.authToken,AdoptionController.deleteAdoption)
@@ -71,6 +82,6 @@ module.exports = function (app) {
   //comment
   app.post("/comment",authToken.authToken, CommentController.postComment);
   app.get("/comment/:adoption_id", CommentController.getCommentByAdoption);
-  app.delete("/comment/:comment_id",authToken.authToken, CommentController.deleteComment);
+  app.delete("/comment/",authToken.authToken, CommentController.deleteComment);
 
 };

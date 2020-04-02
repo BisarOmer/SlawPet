@@ -1,7 +1,7 @@
 const OrgModel = require("../Model/OrgModel");
 
 exports.about = (req, res) => {
-    OrgModel.about(req.params.id,(err, data) => {
+    OrgModel.about(req.params.id, (err, data) => {
         if (err)
             res.status(500).send({
                 message:
@@ -12,7 +12,7 @@ exports.about = (req, res) => {
 };
 
 exports.donate = (req, res) => {
-    OrgModel.donate(req.params.id,(err, data) => {
+    OrgModel.donate(req.params.id, (err, data) => {
         if (err)
             res.status(500).send({
                 message:
@@ -23,7 +23,42 @@ exports.donate = (req, res) => {
 };
 
 exports.adopted = (req, res) => {
-    OrgModel.adobted(req.params.id,(err, data) => {
+    OrgModel.adopted(req, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving adobtion."
+            });
+        else res.send(data);
+    });
+};
+
+exports.viewAsk = (req, res) => {
+    OrgModel.viewAsk(req, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving adobtion."
+            });
+        else res.send(data);
+    });
+};
+
+
+exports.give = (req, res) => {
+    OrgModel.give(req, (err, data) => {
+        if (err)
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving adobtion."
+            });
+        else res.send(data);
+    });
+};
+
+
+exports.cancel = (req, res) => {
+    OrgModel.cancel(req, (err, data) => {
         if (err)
             res.status(500).send({
                 message:

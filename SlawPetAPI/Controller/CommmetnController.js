@@ -38,20 +38,15 @@ exports.getCommentByAdoption = (req, res) => {
 
 
 exports.deleteComment = (req, res) => {
-    CommentModel.deleteComment(req.params.comment_id, (err, data) => {
+    CommentModel.deleteComment(req, (err, data) => {
         if (err) {
-            if (err.kind === "not_found") {
-                res.status(404).send({
-                    message: `Not found Customer with id ${req.params.comment_id}.`
-                });
-            } else {
-                res.status(500).send({
-                    message: "Could not delete Customer with id " + req.params.comment_id
-                });
-            }
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while posting the commetn."
+            })
+        } 
+        else{
+            res.send(data)
         }
-        else
-            res.send({ message: `Customer was deleted successfully!` })
-
     });
 };

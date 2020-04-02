@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { useState, useEffect } from 'react';
 import { AsyncStorage } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Picker,Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Picker, Alert } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +11,6 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn'
 import Colors from '../constants/Colors';
-import DefaultProfile from '../assets/images/account.png';
 import { MonoText } from '../components/StyledText';
 
 export default class AddAdoption extends Component {
@@ -22,7 +21,7 @@ export default class AddAdoption extends Component {
 
 
             Token: "",
-        
+
             routName: "",
             photo: "",
 
@@ -58,8 +57,8 @@ export default class AddAdoption extends Component {
             console.log(error)
         }
 
-        if(this.state.Adoption_id!=undefined)
-        this.fetchData();
+        if (this.state.Adoption_id != undefined)
+            this.fetchData();
     };
 
 
@@ -124,7 +123,7 @@ export default class AddAdoption extends Component {
 
     postAdoption() {
 
-       
+
         const name = this.state.name;
         const age = this.state.age;
         const gender = this.state.gender;
@@ -132,7 +131,7 @@ export default class AddAdoption extends Component {
         const pet = this.state.pet;
         const content = this.state.content;
 
-        
+
 
 
         if (name == "" || age == "" || gender == "" || city == "" || pet == "") {
@@ -180,35 +179,34 @@ export default class AddAdoption extends Component {
 
     };
 
-
     render() {
 
-        
+
         return (
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
-                <View style={{ padding: 20}}>
+                <View style={{ padding: 20 }}>
 
                     <Image
                         style={{ height: 200, backgroundColor: "#ccf0e1" }}
                         borderRadius={5}
                         source={{ uri: imageuri + this.state.photo }} />
-                    
+
 
                     <TouchableOpacity style={styles.uploadimg} onPress={() => { this.setState({ routName: "/upload/AdoptionImage" }); this.openImagePickerAsync(); }}>
                         <Text>Upload a photo</Text>
                     </TouchableOpacity>
 
                     <CustTxtInput placeholder="Name" onChangeText={(name) => { this.setState({ name: name }) }} />
-                    <CustTxtInput placeholder="Age"  keyboardType='phone-pad' onChangeText={(age) => { this.setState({ age: age }) }} />
+                    <CustTxtInput placeholder="Age" keyboardType='phone-pad' onChangeText={(age) => { this.setState({ age: age }) }} />
                     <Picker
                         selectedValue={this.state.gender}
                         onValueChange={(itemValue) =>
                             this.setState({ gender: itemValue })
                         }
                         style={styles.picker}>
-                        <Picker.Item label="Male" value="male" />
-                        <Picker.Item label="Female" value="female" />
+                        <Picker.Item label="Male" value="Male" />
+                        <Picker.Item label="Female" value="Female" />
                     </Picker>
                     <Picker
                         selectedValue={this.state.pet}
@@ -216,9 +214,11 @@ export default class AddAdoption extends Component {
                             this.setState({ pet: itemValue })
                         }
                         style={styles.picker}>
-                        <Picker.Item label="Cat" value="cat" />
+                        <Picker.Item label="Cat" value="Cat" />
                         <Picker.Item label="Dog" value="Dog" />
-                        <Picker.Item label="Other" value="other" />
+                        <Picker.Item label="Bird" value="Bird" />
+                        <Picker.Item label="Rabbit" value="Rabbit" />
+                        <Picker.Item label="Other" value="Other" />
                     </Picker>
                     <Picker
                         selectedValue={this.state.city}
@@ -226,9 +226,11 @@ export default class AddAdoption extends Component {
                             this.setState({ city: itemValue })
                         }
                         style={styles.picker}>
-                        <Picker.Item label="Slemani" value="slemnai" />
-                        <Picker.Item label="Hawler" value="hawler" />
-                        <Picker.Item label="Duhok" value="duhok" />
+                        <Picker.Item label="Slemani" value="Sulaymaniyah" />
+                        <Picker.Item label="Hawler" value="Hawler" />
+                        <Picker.Item label="Hawler" value="Duhok" />
+                        <Picker.Item label="Hawler" value="Halabja" />
+                        <Picker.Item label="Hawler" value="Kirkuk" />
                     </Picker>
                     <CustTxtInput placeholder="Write More" onChangeText={(content) => { this.setState({ content: content }) }}></CustTxtInput>
                 </View>
@@ -241,7 +243,6 @@ export default class AddAdoption extends Component {
         );
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {
