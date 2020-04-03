@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList, Vibration, PickerIOSItem } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as WebBrowser from 'expo-web-browser';
 import { FlatGrid } from 'react-native-super-grid';
@@ -181,55 +181,72 @@ export default class HomeScreen extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={{ marginLeft: '5%', marginRight: "5%" }} >
-                    <FlatGrid
+                    <FlatList
                         ListHeaderComponent={
-                            <View style={{ margin: '5%' }}>
+                            <View style={{ marginBottom: '5%' }}>
                                 <MonoText>City</MonoText>
-                                <Picker
-                                    style={styles.picker}
-                                    selectedValue={this.state.city}
-                                    onValueChange={(itemValue) =>
-                                        this.setState({ city: itemValue })
-                                    }
-                                >
-                                    <Picker.Item label="All" value="All" />
-                                    <Picker.Item label="Slemani" value="Sulaymaniyah" />
-                                    <Picker.Item label="Hawler" value="Hawler" />
-                                    <Picker.Item label="Hawler" value="Duhok" />
-                                    <Picker.Item label="Hawler" value="Halabja" />
-                                    <Picker.Item label="Hawler" value="Kirkuk" />
-                                </Picker>
+                                <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
+                                    <Picker
+                                        style={styles.picker}
+                                        selectedValue={this.state.city}
+                                        onValueChange={(itemValue) =>
+                                            this.setState({ city: itemValue })
+                                        }
+                                    >
+                                        <Picker.Item label="All" value="All" />
+                                        <Picker.Item label="Sulaymaniyah" value="Sulaymaniyah" />
+                                        <Picker.Item label="Hawler" value="Hawler" />
+                                        <Picker.Item label="Duhok" value="Duhok" />
+                                        <Picker.Item label="Halabja" value="Halabja" />
+                                        <Picker.Item label="Kirkuk" value="Kirkuk" />
+                                    </Picker>
+                                </View>
                                 <MonoText>Pet</MonoText>
-                                <Picker
-                                    style={styles.picker}
-                                    selectedValue={this.state.pet}
-                                    onValueChange={(itemValue) =>
-                                        this.setState({ pet: itemValue })
+                                <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
+                                    <Picker
+                                        style={styles.picker}
+                                        selectedValue={this.state.pet}
+                                        onValueChange={(itemValue) =>
+                                            this.setState({ pet: itemValue })
 
-                                    }>
-                                    <Picker.Item label="All" value="All" />
-                                    <Picker.Item label="Cat" value="Cat" />
-                                    <Picker.Item label="Dog" value="Dog" />
-                                    <Picker.Item label="Bird" value="Bird" />
-                                    <Picker.Item label="Rabbit" value="Rabbit" />
-                                    <Picker.Item label="Other" value="Other" />
-                                </Picker>
+                                        }>
+                                        <Picker.Item label="All" value="All" />
+                                        <Picker.Item label="Cat" value="Cat" />
+                                        <Picker.Item label="Dog" value="Dog" />
+                                        <Picker.Item label="Bird" value="Bird" />
+                                        <Picker.Item label="Rabbit" value="Rabbit" />
+                                        <Picker.Item label="Other" value="Other" />
+                                    </Picker>
+                                </View>
                             </View>
                         }
-                        itemDimension={150}
-                        items={adoptions}
+                        keyExtractor={item => String(item.adoption_id)}
+                        data={adoptions}
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('View Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "user" })}>
-                                <View>
-                                    <Image
-                                        style={{ height: 160, width: 150, backgroundColor: "#ccf0e1" }}
-                                        borderRadius={5}
-                                        source={{ uri: imageuri + item.img }}
-                                    />
-                                    <MonoText>{item.name}</MonoText>
-                                    <Text>{item.city}</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={styles.post}>
+                                <TouchableOpacity style={{ margin: '2%' }}>
+                                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                        <Image
+                                            style={{ width: 50, height: 50, backgroundColor: "#ccf0e1"  }}
+                                            borderRadius={100}
+                                            source={{ uri: imageuri + item.profile }}
+                                        />
+                                        <MonoText style={{ marginLeft: "4%" }}>{item.owner}</MonoText>
+                                    </View>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('View Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "user" })}>
+                                    <View>
+                                        <Image
+                                            style={{ height: 160, backgroundColor: "#ccf0e1" }}
+                                            borderRadius={5}
+                                            source={{ uri: imageuri + item.img }}
+                                        />
+                                        <MonoText>{item.title}</MonoText>
+                                    </View>
+                                    <Text>{item.content}</Text>
+                                </TouchableOpacity>
+                            </View>
                         )}
                     />
                 </View>
@@ -249,16 +266,22 @@ const styles = StyleSheet.create({
     },
     picker: {
         height: 50,
-        backgroundColor: '#fff',
         color: '#18F879',
         fontFamily: 'Segoe UI',
         fontWeight: '600',
-        borderRadius: 5,
-        shadowOpacity: 0.4,
-        shadowRadius: 5,
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        },
     },
+    post: {
+        padding:"5%",
+        marginTop: "10%",
+        borderRadius: 5,
+        backgroundColor: "#fff",
+        shadowColor: "#7fcd91",
+        shadowOffset: {
+            width: 0,
+            height:1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 4.65,
+        elevation: 3,
+    }
 });

@@ -1,34 +1,26 @@
 import * as React from 'react';
-import { Text, StyleSheet, Button, ShadowPropTypesIOS } from 'react-native';
+import { Text, StyleSheet, Button, ShadowPropTypesIOS, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
 import PropTypes from 'prop-types';
+import { MonoText } from './StyledText';
 
 
-export default function CustBtn(props,{navigation}) {
+export default function CustBtn(props, { navigation }) {
     return (
-        <Button title={props.title} onPress={props.onpress} color={props.BgColor} 
-        style={[props.style,styles.Btn]} />
+        <TouchableOpacity onPress={props.onpress} style={[props.style, styles.Btn]} >
+            <MonoText style={{color:props.color}}>{props.title}</MonoText>
+        </TouchableOpacity>
     );
 }
 
-CustBtn.propTypes = {
-    title: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.any.isRequired,
-    ])
-};
+
 const styles = StyleSheet.create({
     Btn: {
-        height: 60,
-        width: 100,        
+        alignItems:"center",
+        height: 40,
+        width: 150,
         borderRadius: 5,
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        shadowOffset: {
-            height: 1,
-            width: 10,
-        },
-        elevation: 1,
     },
+
 });

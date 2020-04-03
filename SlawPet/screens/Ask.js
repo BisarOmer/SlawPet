@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, FlatList,RefreshControl } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { render } from 'react-dom';
 import CustTxtInput from '../components/CustTxtInput';
@@ -20,6 +20,8 @@ export default class Ask extends Component {
             Token: "",
 
             messege:"",
+
+            refreshing: false,
         }
     }
 
@@ -41,7 +43,7 @@ export default class Ask extends Component {
        await this.fetchData();
     };
 
-    fetchData = async () => {
+    fetchData = async () => {  
         if (this.state.Token != undefined) {
             fetch(api + '/organization/adobted',
                 {
@@ -58,7 +60,7 @@ export default class Ask extends Component {
                         this.setState({messege:responseJson.messege})
                     }
                     else{
-                        this.setState({ Asks: responseJson });
+                        this.setState({ Asks: responseJson.res });
                     }    
                 })
                 .catch((error) => {
@@ -67,6 +69,13 @@ export default class Ask extends Component {
 
         }
     };
+
+    _onRefresh = () => {
+        this.setState({ refreshing: true });
+        this.fetchData().then(() => {
+            this.setState({ refreshing: false });
+        });
+    }
 
     componentWillUnmount() {
         this._unsubscribe();
@@ -78,6 +87,7 @@ export default class Ask extends Component {
                 <View >
                     {this.state.messege!=""&&<MonoText>{this.state.messege}</MonoText>}
                     <FlatList
+                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/> }
                     keyExtractor={item => String(item.adoption_id)}
                         data={this.state.Asks}
                         renderItem={({ item }) =>

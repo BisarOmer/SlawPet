@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 import Profile from './screens/Profile';
+import EditProfile from './screens/EditProfile';
 import Register from './screens/Register';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -81,6 +82,7 @@ export default function App(props) {
             <Stack.Screen name="MyAdoptions" component={MyAdoptions} />
             <Stack.Screen name="Add Adoption" component={AddAdoption} />
             <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="Edit Profile" component={EditProfile} />
           </Stack.Navigator>
         </NavigationContainer>
       </View>

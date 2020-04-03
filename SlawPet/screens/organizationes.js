@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Picker, FlatList, Button, TouchableHighlightBase } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import * as WebBrowser from 'expo-web-browser';
 import { MonoText } from '../components/StyledText';
 import { Ionicons } from '@expo/vector-icons';
@@ -85,9 +85,8 @@ class Organizationes extends Component {
         return (
             <View style={styles.container}>
 
-                <View style={{ padding: 10 }}>
-                    <CustTxtInput placeholder="Search" onChangeText={(search) => { search == "" ? this.setState({ query: "" }) : this.setState({ query: search }) }} />
-
+                <View style={{ marginLeft:5,marginRight:5 }}>
+                    <TextInput placeholder="Search" style={styles.searchBar} onChangeText={(search) => { search == "" ? this.setState({ query: "" }) : this.setState({ query: search }) }} />
                     <FlatList
                         extraData={this.state.refresh}
                         data={this.state.Organizations}
@@ -95,7 +94,7 @@ class Organizationes extends Component {
                             <TouchableOpacity onPress={() => this.props.navigation.navigate('Organization Profile', { id: item.account_id })} >
                                 <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
                                     <Image
-                                        style={{ width: 50, height: 50, backgroundColor: "#ccf0e1"  }}
+                                        style={{ width: 50, height: 50, backgroundColor: "#ccf0e1" }}
                                         borderRadius={100}
                                         source={{ uri: imageuri + item.profile }}
                                     />
@@ -107,8 +106,6 @@ class Organizationes extends Component {
                         style={{ marginTop: 40, padding: 10 }}
                     />
                 </View>
-
-
             </View >
         );
     }
@@ -121,6 +118,23 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         backgroundColor: '#fff',
-
     },
+    searchBar: {
+        backgroundColor: '#fff',
+        color: '#000',
+        fontSize: 20,
+        fontFamily: 'Segoe UI',
+        fontWeight: '600',
+        borderRadius: 5,
+        shadowOpacity: 0.4,
+        shadowRadius: 5,
+        shadowOffset: {
+            height: 2,
+            width: 0,
+        },
+        elevation: 1,
+        height: 50,
+        padding: 5,
+        marginTop:10
+    }
 });

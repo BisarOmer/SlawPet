@@ -55,24 +55,46 @@ export default class ViewOrg extends Component {
     render() {
         return (
             <View style={styles.container} contentContainerStyle={styles.contentContainer}>
-                <View style={{ padding: '5%' }}>
-                    <Image
-                        style={{ width: 150, height: 150, alignSelf: 'center' }}
-                        borderRadius={150}
-                        source={{ uri: imageuri + this.state.OrganizationData.profile }}
-                    />
-                    <MonoText style={{ alignSelf: 'center' }}>{this.state.OrganizationData.name}</MonoText>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', alignContent: 'flex-start',padding:'5%' }}>
+
+                    <View style={styles.viewShadow}>
+                        <Image
+                            style={{ width: 90, height: 90, backgroundColor: "#ccf0e1" }}
+                            borderRadius={100}
+                            source={{ uri: imageuri + this.state.OrganizationData.profile}} />
+                        <MonoText style={{ height: 45 }}>{this.state.OrganizationData.name} </MonoText>
+                    </View>
+
+                    <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', marginLeft: "10%" }}>
+
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', alignContent: 'flex-start', }}>
+                            <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: "10%" }}>
+                                <Text style={{ marginTop: 15 }}>Adoptions</Text>
+                                <MonoText>15</MonoText>
+                            </View>
+                            <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: "10%" }}>
+                                <Text style={{ marginTop: 15 }}>Adopted</Text>
+                                <MonoText >5</MonoText>
+                            </View>
+                        </View>
+                    </View>
+
                 </View>
 
                 <Tab.Navigator tabBarOptions={{
                     tabBarPosition: "top",
-                    activeTintColor: "#000",
+                    activeTintColor: "#18F879",
+                    inactiveTintColor :"#d7d1c9",
                     swipeEnabled: true,
                     style: { backgroundColor: '#fff' },
-                }}>
+                    pressColor:"#18F879",
+                    indicatorStyle:{ backgroundColor: "#18F879" }
+                }}
+                >
                     <Tab.Screen name="Adobt" component={OrgAdoption} initialParams={{ id: this.state.account_id.id }} />
-                    <Tab.Screen name="About" component={About}  initialParams={{ id: this.state.account_id.id }}/>
-                    <Tab.Screen name="Donate" component={Donate}  initialParams={{ id: this.state.account_id.id }} />
+                    <Tab.Screen name="About" component={About} initialParams={{ id: this.state.account_id.id }} />
+                    <Tab.Screen name="Donate" component={Donate} initialParams={{ id: this.state.account_id.id }} />
                 </Tab.Navigator>
             </View>
         );
@@ -84,8 +106,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        marginRight: '2%',
-        marginLeft: '2%'
     },
     uploadimg: {
         alignSelf: 'center',
@@ -101,24 +121,5 @@ const styles = StyleSheet.create({
 
     contentContainer: {
         paddingTop: 15,
-    },
-    optionIconContainer: {
-        marginRight: 12,
-    },
-    option: {
-        backgroundColor: '#fdfdfd',
-        paddingHorizontal: 15,
-        paddingVertical: 15,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderBottomWidth: 0,
-        borderColor: '#ededed',
-    },
-    lastOption: {
-        borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    optionText: {
-        fontSize: 15,
-        alignSelf: 'flex-start',
-        marginTop: 1,
     },
 });

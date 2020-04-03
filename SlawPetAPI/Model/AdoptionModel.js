@@ -35,7 +35,7 @@ Adoption.create = (newAdoption, result) => {
 };
 
 Adoption.getAll = result => {
-    sql.query("SELECT * FROM adoption where status != 1", (err, res) => {
+    sql.query("select adoption.`account_id`,adoption.`adoption_id`,adoption.`img`,adoption.`name` as title,adoption.`age`,adoption.`gender`,adoption.`city`,adoption.`pet`,adoption.`content`,adoption.`date`,adoption.`status`,user.name as owner,user.profile from user INNER JOIN adoption on adoption.account_id=user.account_id where status != 1", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);

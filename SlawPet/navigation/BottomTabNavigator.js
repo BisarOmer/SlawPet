@@ -8,6 +8,7 @@ import Organizationes from '../screens/organizationes';
 import { useState, useEffect } from 'react';
 import Ask from '../screens/Ask';
 import { View } from 'react-native';
+import AddAdoption from '../screens/AddAdoption'
 import MyAdoptions from '../screens/MyAdoptions';
 import LoginScreen from '../screens/LoginScreen';
 
@@ -21,8 +22,8 @@ export default function BottomTabNavigator({ navigation, route }) {
 
   const [AccountType, setAccType] = useState();
   const [Token, setToken] = useState();
-  const[loaded,setLoaded]=useState(false)
-  
+  const [loaded, setLoaded] = useState(false)
+
   //retrive data
   _retrieveData = async () => {
     try {
@@ -37,76 +38,19 @@ export default function BottomTabNavigator({ navigation, route }) {
     }
   };
 
-  this._retrieveData();
+  _retrieveData();
 
   navigation.setOptions({ headerTitle: getHeaderTitle(route) });
 
-  function firstTabByAcc() {
-    if (AccountType == "Organization") {
-      return (
-        <BottomTab.Screen
-          name="Ask"
-          component={Ask}
-          style={{ backgroudcolor: '#00000' }}
-          options={{
-            title: 'Ask',
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-send" />,
 
-          }}
-        />
-      );
-    }
-
-    else {
-      return (
-        <BottomTab.Screen
-          name="Home"
-          component={HomeScreen}
-          style={{ backgroudcolor: '#00000' }}
-          options={{
-            title: 'Home',
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-home" />,
-          }}
-        />
-      );
-    }
-  }
-  function secondTabByAcc() {
-    if (AccountType == 'Organization') {
-      return (
-        <BottomTab.Screen
-          name="My Adoption"
-          component={MyAdoptions}
-          options={{
-            title: 'My Adoption',
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-paw" />,
-          }}
-        />
-      );
-    }
-
-    else {
-      return (
-        <BottomTab.Screen
-          name="Organizationes"
-          component={Organizationes}
-          options={{
-            title: 'Organizationes',
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-paw" />,
-          }}
-        />
-      );
-    }
-  }
-  function isLogged() {
+  function isLoggedMe() {
     if (Token != null) {
       return (
         <BottomTab.Screen
           name="Profile"
           component={Profile}
           options={{
-            title: 'Me',
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-contact" />,
+            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-person" />,
           }}
         />
       );
@@ -117,8 +61,7 @@ export default function BottomTabNavigator({ navigation, route }) {
           name="Login"
           component={LoginScreen}
           options={{
-            title: 'Me',
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-contact" />,
+            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-person" />,
           }}
         />
       );
@@ -127,22 +70,94 @@ export default function BottomTabNavigator({ navigation, route }) {
 
   }
 
+  function isLoggedAdd() {
+    if (Token != null) {
+      return (
+        <BottomTab.Screen
+          name="Add"
+          component={AddAdoption}
+          style={{ backgroudcolor: '#00000' }}
+          options={{
+            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
+          }}
+        />
+      );
+    }
+    else {
+      return (
+        <BottomTab.Screen
+          name="Add"
+          component={LoginScreen}
+          options={{
+            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
+          }}
+        />
+      );
+    }
+
+
+  }
+
+  function isLoggedAsk() {
+    if (Token != null) {
+      return (
+        <BottomTab.Screen
+          name="Ask"
+          component={Ask}
+          style={{ backgroudcolor: '#00000' }}
+          options={{
+            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-notifications" />,
+          }}
+        />
+      );
+    }
+    else {
+      return (
+        <BottomTab.Screen
+          name="Ask"
+          component={LoginScreen}
+          options={{
+            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-notifications" />,
+          }}
+        />
+      );
+    }
+
+
+  }
+
+
+
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}
-    tabBarOptions={{
-       activeTintColor: '#18F879',
-       inactiveTintColor: 'grey',
-       style:{
-         fontFamily:"Segoe UI"
-       }
-    }}>
+      tabBarOptions={{
+        activeTintColor: '#18F879',
+        inactiveTintColor: 'grey',
+        style: {
+          fontFamily: "Segoe UI"
+        }
+      }}>
 
+      <BottomTab.Screen
+        name="Home"
+        component={HomeScreen}
+        style={{ backgroudcolor: '#00000' }}
+        options={{
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-home" />,
+        }}
+      />
 
-      {firstTabByAcc()}
+      <BottomTab.Screen
+        name="Discover"
+        component={Organizationes}
+        options={{
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-search" />,
+        }}
+      />
 
-      {secondTabByAcc()}
-
-      {isLogged()}
+      {isLoggedAdd()}
+      {isLoggedAsk()}
+      {isLoggedMe()}
 
 
     </BottomTab.Navigator>
@@ -157,12 +172,12 @@ function getHeaderTitle(route) {
       return 'Home';
     case 'Profile':
       return 'Profile';
-    case 'Organizationes':
-      return 'Organizationes';
+    case 'Discover':
+      return 'Discover';
     case 'Ask':
       return 'Ask';
-    case 'My Adoption':
-      return 'My Adoption';
+    case 'Add':
+      return 'Post';
     case 'Login':
       return 'Login';
   }

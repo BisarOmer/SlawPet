@@ -45,7 +45,7 @@ Org.adopted=(req,result)=>{
             return;
         }
         else if (res.length) {
-            result(null, res);
+            result(null,{ "status":true,res});
             return;
           }
           else{

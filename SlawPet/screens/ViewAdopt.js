@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList, Alert, TouchableHighlightBase } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import * as WebBrowser from 'expo-web-browser';
 import { SectionGrid } from 'react-native-super-grid';
 import { MonoText } from '../components/StyledText';
@@ -11,7 +11,7 @@ import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 
-export default class ViewAdopt extends  React.Component {
+export default class ViewAdopt extends React.Component {
 
     constructor(props) {
         super(props);
@@ -127,7 +127,7 @@ export default class ViewAdopt extends  React.Component {
             });
     }
 
-    deleteAdoption() {
+    deleteAdoptionReq() {
         fetch(api + '/adoption/delete',
             {
                 method: 'DELETE',
@@ -145,6 +145,17 @@ export default class ViewAdopt extends  React.Component {
                 console.error(error);
             });
         this.props.navigation.goBack();
+    }
+    deleteAdoption() {
+        Alert.alert(
+            'Deleting Adoption',
+            'After deleting this Adoption you can not restore it',
+            [
+                { text: 'Cancel', style: 'cancel', },
+                { text: 'Yes', onPress: () => this.deleteAdoptionReq() },
+            ],
+            { cancelable: false }
+        )
     }
 
     postComment() {
@@ -214,12 +225,20 @@ export default class ViewAdopt extends  React.Component {
         }
     }
 
+    commentInput() {
+        return (
+            <TextInput placeholder="write comment" onChangeText={(content) => { this.setState({ content: content }) }} style={styles.commentInput} />
+        );
+    }
+
     commentSection() {
         if (this.state.Token != null) {
             return (
-                <View>
-                    <CustTxtInput placeholder="Your Comment" onChangeText={(content) => { this.setState({ content: content }) }} />
-                    <View style={{ padding: 25 }}><CustBtn title="Post" onpress={this.postComment} /></View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignContent: 'flex-start', }}>
+                    {this.commentInput()}
+                    <TouchableOpacity style={styles.post} onPress={this.postComment}>
+                        <MonoText style={{ color: "#fff" ,justifyContent:"center"}}>Post</MonoText>
+                    </TouchableOpacity>
                 </View>
             );
         }
@@ -237,25 +256,29 @@ export default class ViewAdopt extends  React.Component {
         return (
             <View>
 
-                <View>
+                <TouchableOpacity style={{ marginTop: '2%' }}>
+                    <View style={{ flex: 1, flexDirection: "row", marginBottom: "5%" }}>
+                        <Image
+                            style={{ width: 50, height: 50, }}
+                            borderRadius={100}
+                            source={{ uri: imageuri + AdoptionData.profile }}
+                        />
+                        <MonoText style={{ marginLeft: "4%" }}>{AdoptionData.owner}</MonoText>
+                    </View>
+                </TouchableOpacity>
 
+                <View>
                     <Image
                         style={{ height: 160, backgroundColor: "#ccf0e1" }}
                         borderRadius={5}
                         source={{ uri: imageuri + AdoptionData.img }}
                     />
-                    <MonoText>{AdoptionData.title}</MonoText>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignContent: 'flex-start', }}>
+                        <MonoText>{AdoptionData.title}</MonoText>
+                        {this.state.TypeUser == "owner" ? <CustBtn title="Delete" color="#fff" style={{ backgroundColor: "#fa163f", marginTop: '3%' }} onpress={this.deleteAdoption} /> : null}
+                        {this.state.TypeUser == "user" ? <CustBtn title="Adopt" color="#fff" style={{ backgroundColor: Colors.primaryBtnBG, marginTop: '3%' }} onpress={this.ask}></CustBtn> : null}
+                    </View>
 
-                    <TouchableOpacity style={{ marginTop: '2%' }}>
-                        <View style={{ flex: 1, flexDirection: "row", marginBottom: "5%" }}>
-                            <Image
-                                style={{ width: 50, height: 50, }}
-                                borderRadius={100}
-                                source={{ uri: imageuri + AdoptionData.profile }}
-                            />
-                            <MonoText style={{ marginLeft: "4%" }}>{AdoptionData.owner}</MonoText>
-                        </View>
-                    </TouchableOpacity>
                 </View>
 
                 <SectionGrid
@@ -268,7 +291,7 @@ export default class ViewAdopt extends  React.Component {
                     ]}
                     style={styles.gridView}
 
-                    renderItem={({ item, section, index }) => (
+                    renderItem={({ item }) => (
                         <View style={[styles.itemContainer, { backgroundColor: "#fff" }]}>
                             <MonoText style={styles.itemName}>{item.name}</MonoText>
                             <Text style={styles.itemCode}>{item.code}</Text>
@@ -279,20 +302,13 @@ export default class ViewAdopt extends  React.Component {
                         <MonoText style={styles.sectionHeader}>{section.title}</MonoText>
                     )}
                 />
-
                 <View style={{ margin: '5%' }}>
                     <MonoText>{AdoptionData.content}</MonoText>
                 </View >
 
-                <View style={{ margin: '3%', padding: 10 }}>
-                    {/* //btns */}
-                    {this.state.TypeUser == "owner" ? <CustBtn title="Delete" BgColor={"#fa163f"} onpress={this.deleteAdoption} /> : null}
-                    {this.state.TypeUser == "user" ? <CustBtn title="Adobt" BgColor={Colors.primaryBtnBG} onpress={this.ask} /> : null}
-                </View>
-                {this.commentSection()}
                 <MonoText>Comments</MonoText>
-                
-               
+                {this.commentSection()}
+
             </View>
         );
     }
@@ -368,8 +384,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     itemContainer: {
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         borderRadius: 5,
+        backgroundColor: "#f4e04d",
         padding: 10,
         height: 100,
         shadowOpacity: 0.4,
@@ -380,15 +397,17 @@ const styles = StyleSheet.create({
     },
     itemName: {
         color: '#000',
-        fontWeight: '600',
+        fontWeight: '800',
     },
     itemCode: {
+
         fontWeight: '600',
-        fontSize: 12,
+        fontSize: 14,
         color: '#000',
     },
     sectionHeader: {
         flex: 1,
+        borderRadius: 5,
         fontWeight: '600',
         alignItems: 'center',
         backgroundColor: '#000',
@@ -399,12 +418,29 @@ const styles = StyleSheet.create({
         backgroundColor: '#f1f3f4',
         borderRadius: 5,
         padding: 10,
-
         shadowOpacity: 0.4,
         shadowOffset: {
             height: 2,
             width: 0,
         }
-    }
+    },
+    commentInput: {
+        width: 300,
+        backgroundColor: '#f1f3f4',
+        borderRadius: 5,
+        padding: 10,
+
+    },
+    post: {
+        width: 80,
+        height:45,
+        margin: "1%",
+        alignItems: "center",
+        backgroundColor: '#18F879',
+        padding: 10,
+        fontWeight: "600",
+        fontSize: 18,
+        borderRadius: 5,
+    },
 
 });

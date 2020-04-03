@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Vibration } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Button, Alert, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Button, Alert, RefreshControl, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -13,6 +13,8 @@ import { MonoText } from '../components/StyledText';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 import { render } from 'react-dom';
+import { FlatGrid } from 'react-native-super-grid';
+
 
 
 //require
@@ -33,37 +35,19 @@ export default class Profile extends Component {
             AccountType: '',
             AccountData: {},
             OrganizationData: {},
-
-            newName: "",
-            newEmail: "",
-            newPhone: "",
-            newPassword: "",
-            newAddress: "",
-
-            photo: "",
-            routName: "",
-
-            notFilled: false,
-            emailError: false,
-
+            Adoptions: [],
             refreshing: false,
 
         };
 
         //retrve data and showing
         this.showOrgData = this.showOrgData.bind(this);
-        this.loggedOut = this.loggedOut.bind(this);
         this.fetchData = this.fetchData.bind(this);
-        // imagge select and upload
-        this.openImagePickerAsync = this.openImagePickerAsync.bind(this);
-        this.handleUploadPhoto = this.handleUploadPhoto.bind(this);
-        //update
-        this.updateData = this.updateData.bind(this);
-        this.updatePassword = this.updatePassword.bind(this);
-        this.updateAddress = this.updateAddress.bind(this);
-
-
     }
+
+    _unsubscribe = this.props.navigation.addListener('focus', async () => {
+        await this._retrieveData();
+    });
 
     _retrieveData = async () => {
         try {
@@ -76,16 +60,7 @@ export default class Profile extends Component {
         }
 
         this.fetchData();
-    };
-
-    _deleteToken = async () => {
-        try {
-            await AsyncStorage.removeItem('AccountType');
-            await AsyncStorage.removeItem('auth_Token');
-
-        } catch (error) {
-            console.log(error.message);
-        }
+        this.fetchAdoptions();
     };
 
     fetchData = async () => {
@@ -102,10 +77,6 @@ export default class Profile extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({ AccountData: responseJson });
-                //storing data
-                this.setState({ newName: responseJson.name });
-                this.setState({ newEmail: responseJson.email });
-                this.setState({ newPhone: responseJson.phoneNumber });
             })
             .catch((error) => {
                 console.error(error);
@@ -133,101 +104,31 @@ export default class Profile extends Component {
         }
     };
 
+    fetchAdoptions() {
+        fetch(api + '/myAdoptions',
+            {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'x-access-token': this.state.Token,
+                }
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({ Adoptions: responseJson });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     _onRefresh = () => {
         this.setState({ refreshing: true });
         this.fetchData().then(() => {
             this.setState({ refreshing: false });
         });
     }
-
-    handleUploadPhoto = async (photo, routName) => {
-        console.log(routName);
-        const photoData = {
-            uri: photo.uri,
-            name: photo.uri.split('/')[photo.uri.split('/').length - 1],
-            type: 'image/jpeg',
-            height: photo.height,
-            width: photo.width,
-        }
-
-        const formData = new FormData();
-        formData.append("photo", photoData);
-        formData.append("typeUpload", routName);
-
-        fetch(api + routName, {
-            body: formData,
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data',
-                'x-access-token': this.state.Token
-            }
-        })
-            .then(response => {
-                return response.json()
-            })
-            .then(response => {
-                console.log("upload succes", response);
-                alert("Upload success");
-                this.setState({ photo: "" });
-
-                if (routName == "/upload/Profile") {
-                    this.setState(prevState => ({
-                        AccountData: {
-                            ...prevState.AccountData,
-                            profile: photo.name
-                        }
-                    }))
-                }
-
-                else if (routName == "/upload/Certification") {
-                    this.setState(prevState => ({
-                        OrganizationData: {
-                            ...prevState.OrganizationData,
-                            certification: photo.name
-                        }
-                    }))
-                }
-
-                else if (routName == "/upload/Donate") {
-                    this.setState(prevState => ({
-                        OrganizationData: {
-                            ...prevState.OrganizationData,
-                            qrCode: photo.name
-                        }
-                    }))
-                }
-
-
-            })
-            .catch(error => {
-                console.log("upload error", error);
-                alert("Upload failed!");
-            });
-    };
-
-    openImagePickerAsync = async () => {
-
-        let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
-
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
-            return;
-        }
-
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
-
-        if (pickerResult.cancelled === true) {
-            return;
-        }
-
-        if (pickerResult.uri) {
-            this.setState({ photo: pickerResult });
-        }
-
-        this.handleUploadPhoto(this.state.photo, this.state.routName);
-
-    };
 
     showOrgData() {
 
@@ -253,168 +154,77 @@ export default class Profile extends Component {
 
     };
 
-    loggedOut() {
-        this._deleteToken();
-        this.props.navigation.goBack();
-    };
-
     componentDidMount = async () => {
         await this._retrieveData();
     };
 
-    updateData() {
-
-        var validEmail = validate({ from: this.state.newEmail }, constraints);
-
-        if (this.state.newName == "" || this.state.newEmail == "" || this.state.newPhone == "") {
-            this.setState({ notFilled: true });
-            if (validEmail == undefined)
-                this.setState({ emailError: false });
-        }
-        else if (validEmail !== undefined) {
-            this.setState({ emailError: true });
-            this.setState({ notFilled: false });
-        }
-
-        else {
-            fetch(api + '/update', {
-                method: 'PUT',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'x-access-token': this.state.Token,
-                }
-                ,
-                body: JSON.stringify({
-                    name: this.state.newName,
-                    email: this.state.newEmail,
-                    phoneNumber: this.state.newPhone,
-                })
-            }
-            )
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    if (responseJson) {
-                        if (!responseJson.status) {
-                            Alert.alert(responseJson.message);
-                        }
-                        else {
-                            Alert.alert(responseJson.message);
-                        }
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-
-        }
+    componentWillUnmount() {
+        this._unsubscribe();
     }
 
-    updatePassword() {
+    headers() {
+        return (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', alignContent: 'flex-start', }}>
 
-        if (this.state.newPassword == "") {
-            Alert.alert("set new password")
-        }
-        else {
-            fetch(api + '/updatepassword', {
-                method: 'PUT',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'x-access-token': this.state.Token,
-                }
-                ,
-                body: JSON.stringify({
-                    password: this.state.newPassword,
-                })
-            }
-            )
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    if (responseJson) {
-                        if (!responseJson.status) {
-                            Alert.alert(responseJson.message);
-                        }
-                        else {
-                            Alert.alert(responseJson.message);
-                        }
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
-    }
+                <View style={styles.viewShadow}>
+                    <Image
+                        style={{ width: 90, height: 90, backgroundColor: "#ccf0e1" }}
+                        borderRadius={100}
+                        source={{ uri: imageuri + this.state.AccountData.profile }} />
+                    <MonoText style={{ height: 45 }}>{this.state.AccountData.name} </MonoText>
+                </View>
 
-    updateAddress() {
+                <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', marginLeft: "10%" }}>
 
-        fetch(api + '/updateAddress', {
-            method: 'PUT',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'x-access-token': this.state.Token,
-            }
-            ,
-            body: JSON.stringify({
-                address: this.state.newAddress,
-            })
-        }
-        )
-            .then((response) => response.json())
-            .then((responseJson) => {
-                if (responseJson) {
-                    if (!responseJson.status) {
-                        Alert.alert(responseJson.message);
-                    }
-                    else {
-                        Alert.alert(responseJson.message);
-                    }
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', alignContent: 'flex-start', }}>
+                        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: "10%" }}>
+                            <Text style={{ marginTop: 15 }}>Adoptions</Text>
+                            <MonoText>15</MonoText>
+                        </View>
+                        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: "10%" }}>
+                            <Text style={{ marginTop: 15 }}>Adopted</Text>
+                            <MonoText >5</MonoText>
+                        </View>
+                    </View>
+
+                    <TouchableOpacity style={styles.uploadimg}  onPress={() => {this.props.navigation.navigate('Edit Profile')}}>
+                        <Text>Edit Profile</Text>
+                    </TouchableOpacity>
+
+                </View>
+
+            </View>
+        );
 
     }
 
     render() {
-
         return (
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} refreshControl={
-                <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/> } >
-
-                <View style={styles.viewShadow}>
-                    <Image
-                        style={{ width: 150, height: 150, alignSelf: 'center' }}
-                        borderRadius={150}
-                        source={{ uri: imageuri + this.state.AccountData.profile }} />
-                    <TouchableOpacity style={styles.uploadimg} onPress={() => { this.setState({ routName: "/upload/Profile" }); this.openImagePickerAsync() }}>
-                        <Text>Upload a photo</Text>
-                    </TouchableOpacity>
-
-                    <CustTxtInputProfile placeholder={this.state.AccountData.name} onChangeText={(name) => { this.setState({ newName: name }) }} />
-                    <CustTxtInputProfile placeholder={this.state.AccountData.email} onChangeText={(email) => { this.setState({ newEmail: email }) }} />
-                    <CustTxtInputProfile placeholder={String(this.state.AccountData.phoneNumber)} keyboardType='phone-pad' onChangeText={(phone) => { this.setState({ newPhone: phone }) }} />
-                    <View style={{ padding: 50 }}><CustBtn title="Update" onpress={this.updateData} BgColor={Colors.primaryBtnBG} style={{ marginTop: "5%" }} /></View>
-
+            <SafeAreaView style={styles.container}>
+                <View style={{ marginLeft: "5%" }} >
+                    <FlatGrid
+                        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh} />}
+                        ListHeaderComponent={this.headers()}
+                        itemDimension={150}
+                        items={this.state.Adoptions}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('View Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "owner" })}>
+                                <View>
+                                    <Image
+                                        style={{ height: 160, width: 150, backgroundColor: "#ccf0e1" }}
+                                        borderRadius={5}
+                                        source={{ uri: imageuri + item.img }}
+                                    />
+                                    <MonoText>{item.name}</MonoText>
+                                    <Text>{item.city}</Text>
+                                    {item.status == 1 ? <Text style={{ color: "#18F879" }}>Adopted</Text> : null}
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                    />
                 </View>
+            </SafeAreaView>
 
-                <View style={styles.viewShadow}>
-                    <CustTxtInput placeholder="New Password" onChangeText={(password) => { this.setState({ newPassword: password }) }} />
-                    <View style={{ padding: 50 }}><CustBtn title="Update Password" onpress={this.updatePassword} BgColor={Colors.primaryBtnBG} /></View>
-                </View>
-
-                {this.state.AccountType == "Organization" ? this.showOrgData() : null}
-
-                <View style={{ padding: 20 }}>
-                    {this.state.notFilled ? <MonoText style={{ color: "#fa163f" }}>Fill All input</MonoText> : null}
-                    <Text style={{ color: "#fa163f" }}>{this.state.emailError ? "Invalid Email" : null}</Text>
-                </View>
-                <View style={{ padding: 50 }}>
-                    <CustBtn style={{ marginTop: '10%' }} title="Logout" BgColor='#000' onpress={this.loggedOut} />
-                </View>
-            </ScrollView>
         );
     }
 
@@ -423,55 +233,24 @@ export default class Profile extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: "#fff"
     },
-
     viewShadow: {
-        margin: "5%",
-        padding: "2%",
-        backgroundColor: '#fff',
-        color: '#18F879',
-        borderRadius: 5,
-        shadowOpacity: 0.4,
-        shadowRadius: 5,
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        },
-        elevation: 1,
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignContent: 'center',
     },
-
-
-
     uploadimg: {
-        alignSelf: 'center',
-        marginTop: '2%',
-        backgroundColor: '#dff6f0',
-        padding: 10,
+        width:180,
+        alignItems:"center",
+        marginTop: '8%',
+        backgroundColor: '#fff',
+        padding: 5,
         fontWeight: "600",
         fontSize: 18,
-        borderRadius: 5
-    },
-    contentContainer: {
-        paddingTop: 15,
-    },
-    optionIconContainer: {
-        marginRight: 12,
-    },
-    option: {
-        backgroundColor: '#fdfdfd',
-        paddingHorizontal: 15,
-        paddingVertical: 15,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderBottomWidth: 0,
-        borderColor: '#ededed',
-    },
-    lastOption: {
-        borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    optionText: {
-        fontSize: 15,
-        alignSelf: 'flex-start',
-        marginTop: 1,
+        borderRadius: 2,
+        borderWidth:1,
+        borderColor:"#000",
+
     },
 });

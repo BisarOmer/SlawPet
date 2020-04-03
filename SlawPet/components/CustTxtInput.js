@@ -9,7 +9,7 @@ export default function CustTxtInput(props) {
 const styles = StyleSheet.create({
     txtinput: {
         backgroundColor: '#fff',
-        color: '#18F879',
+        color: '#000',
         fontSize: 20,
         fontFamily: 'Segoe UI',
         fontWeight: '600',

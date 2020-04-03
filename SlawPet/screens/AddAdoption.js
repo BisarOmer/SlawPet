@@ -180,8 +180,6 @@ export default class AddAdoption extends Component {
     };
 
     render() {
-
-
         return (
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
@@ -192,46 +190,55 @@ export default class AddAdoption extends Component {
                         borderRadius={5}
                         source={{ uri: imageuri + this.state.photo }} />
 
-
                     <TouchableOpacity style={styles.uploadimg} onPress={() => { this.setState({ routName: "/upload/AdoptionImage" }); this.openImagePickerAsync(); }}>
                         <Text>Upload a photo</Text>
                     </TouchableOpacity>
 
                     <CustTxtInput placeholder="Name" onChangeText={(name) => { this.setState({ name: name }) }} />
                     <CustTxtInput placeholder="Age" keyboardType='phone-pad' onChangeText={(age) => { this.setState({ age: age }) }} />
-                    <Picker
-                        selectedValue={this.state.gender}
-                        onValueChange={(itemValue) =>
-                            this.setState({ gender: itemValue })
-                        }
-                        style={styles.picker}>
-                        <Picker.Item label="Male" value="Male" />
-                        <Picker.Item label="Female" value="Female" />
-                    </Picker>
-                    <Picker
-                        selectedValue={this.state.pet}
-                        onValueChange={(itemValue) =>
-                            this.setState({ pet: itemValue })
-                        }
-                        style={styles.picker}>
-                        <Picker.Item label="Cat" value="Cat" />
-                        <Picker.Item label="Dog" value="Dog" />
-                        <Picker.Item label="Bird" value="Bird" />
-                        <Picker.Item label="Rabbit" value="Rabbit" />
-                        <Picker.Item label="Other" value="Other" />
-                    </Picker>
-                    <Picker
-                        selectedValue={this.state.city}
-                        onValueChange={(itemValue) =>
-                            this.setState({ city: itemValue })
-                        }
-                        style={styles.picker}>
-                        <Picker.Item label="Slemani" value="Sulaymaniyah" />
-                        <Picker.Item label="Hawler" value="Hawler" />
-                        <Picker.Item label="Hawler" value="Duhok" />
-                        <Picker.Item label="Hawler" value="Halabja" />
-                        <Picker.Item label="Hawler" value="Kirkuk" />
-                    </Picker>
+
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5,marginTop:"5%" }}>
+                        <Picker
+                            selectedValue={this.state.gender}
+                            onValueChange={(itemValue) =>
+                                this.setState({ gender: itemValue })
+                            }
+                            style={styles.picker}>
+                            <Picker.Item label="Male" value="Male" />
+                            <Picker.Item label="Female" value="Female" />
+                        </Picker>
+                    </View>
+
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5,marginTop:"5%" }}>
+                        <Picker
+                            selectedValue={this.state.pet}
+                            onValueChange={(itemValue) =>
+                                this.setState({ pet: itemValue })
+                            }
+                            style={styles.picker}>
+                            <Picker.Item label="Cat" value="Cat" />
+                            <Picker.Item label="Dog" value="Dog" />
+                            <Picker.Item label="Bird" value="Bird" />
+                            <Picker.Item label="Rabbit" value="Rabbit" />
+                            <Picker.Item label="Other" value="Other" />
+                        </Picker>
+                    </View>
+
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5,marginTop:"5%" }}>
+                        <Picker
+                            selectedValue={this.state.city}
+                            onValueChange={(itemValue) =>
+                                this.setState({ city: itemValue })
+                            }
+                            style={styles.picker}>
+                            <Picker.Item label="Sulaymaniyah" value="Sulaymaniyah" />
+                            <Picker.Item label="Hawler" value="Hawler" />
+                            <Picker.Item label="Duhok" value="Duhok" />
+                            <Picker.Item label="Halabja" value="Halabja" />
+                            <Picker.Item label="Kirkuk" value="Kirkuk" />
+                        </Picker>
+                    </View>
+
                     <CustTxtInput placeholder="Write More" onChangeText={(content) => { this.setState({ content: content }) }}></CustTxtInput>
                 </View>
 
@@ -260,16 +267,7 @@ const styles = StyleSheet.create({
     },
     picker: {
         height: 50,
-        backgroundColor: '#fff',
         color: '#18F879',
         fontFamily: 'Segoe UI',
-        fontWeight: '600',
-        borderRadius: 5,
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        },
     }
 });

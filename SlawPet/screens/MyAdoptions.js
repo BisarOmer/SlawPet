@@ -22,7 +22,7 @@ export default class Adobtion extends Component {
         await this._retrieveData();
     };
 
-    _unsubscribe = this.props.navigation.addListener('focus', async () => {
+     _unsubscribe = this.props.navigation.addListener('focus', async () => {
         await this._retrieveData();
     });
 
@@ -59,27 +59,14 @@ export default class Adobtion extends Component {
     };
 
     componentWillUnmount() {
-        this._unsubscribe();
+        // this._unsubscribe();
     }
 
     render() {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={{ marginLeft: "5%" }} >
-                    <FlatGrid
-                        ListHeaderComponent={
-                            <View style={{ marginBottom: '4%' }}>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Add Adoption')} >
-                                    <View>
-                                        <Image
-                                            style={{ height: 160, width: 150, backgroundColor: "#f1f3f4", alignSelf: "center" }}
-                                            borderRadius={5}
-                                        />
-                                        <MonoText style={{ alignSelf: "center" }}>Add</MonoText>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        }
+                    <FlatGrid                      
                         itemDimension={150}
                         items={this.state.Adoptions}
                         renderItem={({ item }) => (
