@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList, Vibration, PickerIOSItem } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import * as WebBrowser from 'expo-web-browser';
-import { FlatGrid } from 'react-native-super-grid';
+import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList, } from 'react-native';
+
 import { MonoText } from '../components/StyledText';
-import { render } from 'react-dom';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 import { AsyncStorage } from 'react-native';
 
 
-export default class HomeScreen extends Component {
+export default class Home extends Component {
 
     constructor(props) {
         super(props);
@@ -180,10 +177,9 @@ export default class HomeScreen extends Component {
         const adoptions = this.state.adoptions
         return (
             <SafeAreaView style={styles.container}>
-                <View style={{ marginLeft: '5%', marginRight: "5%" }} >
                     <FlatList
                         ListHeaderComponent={
-                            <View style={{ marginBottom: '5%' }}>
+                            <View style={{ marginBottom: '2%',backgroundColor:"#fff",padding: "4%", }}>
                                 <MonoText>City</MonoText>
                                 <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
                                     <Picker
@@ -235,10 +231,10 @@ export default class HomeScreen extends Component {
                                     </View>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('View Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "user" })}>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "user" })}>
                                     <View>
                                         <Image
-                                            style={{ height: 160, backgroundColor: "#ccf0e1" }}
+                                            style={{ height: 220, backgroundColor: "#ccf0e1" }}
                                             borderRadius={5}
                                             source={{ uri: imageuri + item.img }}
                                         />
@@ -249,7 +245,7 @@ export default class HomeScreen extends Component {
                             </View>
                         )}
                     />
-                </View>
+                
             </SafeAreaView >
         );
     }
@@ -260,8 +256,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "column",
-        backgroundColor: '#fff',
-
+        backgroundColor:"#F0F2F5",
 
     },
     picker: {
@@ -271,17 +266,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     post: {
-        padding:"5%",
-        marginTop: "10%",
-        borderRadius: 5,
+        padding:"4%",
+        marginTop: "2%",
         backgroundColor: "#fff",
-        shadowColor: "#7fcd91",
-        shadowOffset: {
-            width: 0,
-            height:1,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 4.65,
-        elevation: 3,
     }
 });

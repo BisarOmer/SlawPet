@@ -11,7 +11,7 @@ import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 
-export default class ViewAdopt extends React.Component {
+export default class ViewAdoption extends React.Component {
 
     constructor(props) {
         super(props);
@@ -196,7 +196,7 @@ export default class ViewAdopt extends React.Component {
                 },
                 body: JSON.stringify({
                     Adoption_id: this.state.Adoption_id,
-                    org_id: this.state.AdoptionData.account_id
+                    saver_id: this.state.AdoptionData.account_id
                 })
             })
             .then((response) => response.json())
@@ -234,10 +234,10 @@ export default class ViewAdopt extends React.Component {
     commentSection() {
         if (this.state.Token != null) {
             return (
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignContent: 'flex-start', }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                     {this.commentInput()}
                     <TouchableOpacity style={styles.post} onPress={this.postComment}>
-                        <MonoText style={{ color: "#fff" ,justifyContent:"center"}}>Post</MonoText>
+                        <MonoText style={{ color: "#fff", marginTop: "-5%" }}>Post</MonoText>
                     </TouchableOpacity>
                 </View>
             );
@@ -257,7 +257,7 @@ export default class ViewAdopt extends React.Component {
             <View>
 
                 <TouchableOpacity style={{ marginTop: '2%' }}>
-                    <View style={{ flex: 1, flexDirection: "row", marginBottom: "5%" }}>
+                    <View style={{ flex: 1, flexDirection: "row", marginBottom: "5%" ,alignItems:"center"}}>
                         <Image
                             style={{ width: 50, height: 50, }}
                             borderRadius={100}
@@ -269,7 +269,7 @@ export default class ViewAdopt extends React.Component {
 
                 <View>
                     <Image
-                        style={{ height: 160, backgroundColor: "#ccf0e1" }}
+                        style={{ height: 225, backgroundColor: "#ccf0e1" }}
                         borderRadius={5}
                         source={{ uri: imageuri + AdoptionData.img }}
                     />
@@ -285,14 +285,14 @@ export default class ViewAdopt extends React.Component {
                     itemDimension={90}
                     sections={[
                         {
-                            title: 'Information',
+                            title: 'Details',
                             data: items.slice(0, 3),
                         },
                     ]}
                     style={styles.gridView}
 
                     renderItem={({ item }) => (
-                        <View style={[styles.itemContainer, { backgroundColor: "#fff" }]}>
+                        <View style={[styles.itemContainer]}>
                             <MonoText style={styles.itemName}>{item.name}</MonoText>
                             <Text style={styles.itemCode}>{item.code}</Text>
                         </View>
@@ -352,8 +352,8 @@ export default class ViewAdopt extends React.Component {
                     data={this.state.Comments}
                     keyExtractor={item => String(item.comment_id)}
                     renderItem={({ item }) =>
-                        <TouchableOpacity style={{ marginTop: 10 }} onPress={() => { item.account_id == this.state.Account_id ? this.deleteComment(item.comment_id) : null }} >
-                            <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
+                        <TouchableOpacity style={{ marginTop: 10, }} onPress={() => { item.account_id == this.state.Account_id ? this.deleteComment(item.comment_id) : null }} >
+                            <View style={{ flex: 1, flexDirection: "row", marginBottom: 10,alignItems:"center" }}>
                                 <Image
                                     style={{ width: 50, height: 50, }}
                                     borderRadius={100}
@@ -361,7 +361,9 @@ export default class ViewAdopt extends React.Component {
                                 />
                                 <MonoText style={{ marginLeft: "4%" }}>{item.name}</MonoText>
                             </View>
-                            <MonoText style={styles.comment}>{item.content}</MonoText>
+                            <View style={{ borderRadius: 5, backgroundColor: '#f1f3f4', }}>
+                                <MonoText style={styles.comment}>{item.content}</MonoText>
+                            </View>
                         </TouchableOpacity>
                     }
                     style={{ margin: "3%" }}
@@ -384,23 +386,16 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     itemContainer: {
+        padding: 10,
         justifyContent: 'flex-start',
         borderRadius: 5,
-        backgroundColor: "#f4e04d",
-        padding: 10,
-        height: 100,
-        shadowOpacity: 0.4,
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        },
+        backgroundColor: "#fff",
     },
     itemName: {
         color: '#000',
         fontWeight: '800',
     },
     itemCode: {
-
         fontWeight: '600',
         fontSize: 14,
         color: '#000',
@@ -410,19 +405,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         fontWeight: '600',
         alignItems: 'center',
-        backgroundColor: '#000',
-        color: 'white',
+        backgroundColor: '#f7f7f7',
+        color: '#000',
         padding: 10,
     },
     comment: {
-        backgroundColor: '#f1f3f4',
         borderRadius: 5,
         padding: 10,
-        shadowOpacity: 0.4,
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        }
     },
     commentInput: {
         width: 300,
@@ -433,7 +422,7 @@ const styles = StyleSheet.create({
     },
     post: {
         width: 80,
-        height:45,
+        height: 45,
         margin: "1%",
         alignItems: "center",
         backgroundColor: '#18F879',

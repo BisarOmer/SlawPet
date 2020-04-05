@@ -2,35 +2,27 @@ import * as React from 'react';
 import { AsyncStorage } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
+import Home from '../screens/Home';
 import Profile from '../screens/Profile';
-import Organizationes from '../screens/organizationes';
-import { useState, useEffect } from 'react';
+import Discover from '../screens/Discover';
+import { useState} from 'react';
 import Ask from '../screens/Ask';
-import { View } from 'react-native';
 import AddAdoption from '../screens/AddAdoption'
-import MyAdoptions from '../screens/MyAdoptions';
-import LoginScreen from '../screens/LoginScreen';
+import LoginScreen from '../screens/Login';
 
 const BottomTab = createBottomTabNavigator();
-const isuser = false;
 
-const INITIAL_ROUTE_NAME = isuser ? 'Home' : "Ask";
+const INITIAL_ROUTE_NAME =  'Home' ;
 
 export default function BottomTabNavigator({ navigation, route }) {
 
 
-  const [AccountType, setAccType] = useState();
   const [Token, setToken] = useState();
-  const [loaded, setLoaded] = useState(false)
 
   //retrive data
   _retrieveData = async () => {
     try {
       const token = await AsyncStorage.getItem('auth_Token');
-      const accType = await AsyncStorage.getItem('AccountType');
-
-      setAccType(accType);
       setToken(token);
 
     } catch (error) {
@@ -47,7 +39,7 @@ export default function BottomTabNavigator({ navigation, route }) {
     if (Token != null) {
       return (
         <BottomTab.Screen
-          name="Profile"
+          name="Me"
           component={Profile}
           options={{
             tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-person" />,
@@ -127,7 +119,6 @@ export default function BottomTabNavigator({ navigation, route }) {
   }
 
 
-
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}
       tabBarOptions={{
@@ -140,18 +131,18 @@ export default function BottomTabNavigator({ navigation, route }) {
 
       <BottomTab.Screen
         name="Home"
-        component={HomeScreen}
+        component={Home}
         style={{ backgroudcolor: '#00000' }}
         options={{
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-home" />,
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-home" />,          
         }}
       />
 
       <BottomTab.Screen
         name="Discover"
-        component={Organizationes}
+        component={Discover}
         options={{
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-search" />,
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-search" />, 
         }}
       />
 
@@ -170,8 +161,8 @@ function getHeaderTitle(route) {
   switch (routeName) {
     case 'Home':
       return 'Home';
-    case 'Profile':
-      return 'Profile';
+    case 'Me':
+      return 'Me';
     case 'Discover':
       return 'Discover';
     case 'Ask':

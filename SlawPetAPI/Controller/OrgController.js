@@ -44,7 +44,6 @@ exports.viewAsk = (req, res) => {
     });
 };
 
-
 exports.give = (req, res) => {
     OrgModel.give(req, (err, data) => {
         if (err)
@@ -55,7 +54,6 @@ exports.give = (req, res) => {
         else res.send(data);
     });
 };
-
 
 exports.cancel = (req, res) => {
     OrgModel.cancel(req, (err, data) => {

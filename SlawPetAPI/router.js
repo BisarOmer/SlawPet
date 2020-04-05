@@ -68,6 +68,11 @@ module.exports = function (app) {
   app.get("/adoption/byPetandCity/:city-:pet", AdoptionController.adobtoinBypetandCity)
   app.get("/adoption/byorg/:org_id", AdoptionController.adobtoinByorg)
   app.get("/adoption/byid/:id", AdoptionController.adobtionByid)
+
+  app.post("/count", AdoptionController.count)
+  app.post("/countAdopted", AdoptionController.countAdopted)
+
+
   
   //ask
   app.post("/ask",authToken.authToken,AdoptionController.ask)

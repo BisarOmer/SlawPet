@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { StyleSheet, Text, View, Button, Picker, Alert } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import { render } from 'react-dom';
+
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn';
 import { MonoText } from '../components/StyledText';
 import Colors from '../constants/Colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import axios from 'axios';
 import api from '../constants/api';
 
 
@@ -99,25 +96,26 @@ export default function Register({ navigation }) {
                 <CustTxtInput placeholder="Email" onChangeText={(email) => { email == "" ? setEmail(null) : setEmail(email) }} keyboardType='email-address' />
                 <CustTxtInput password={true} placeholder="Password" onChangeText={(password) => { password == "" ? setPassword(null) : setPassword(password) }} />
                 <CustTxtInput placeholder="Phone Number" onChangeText={(phone) => { if (/^\d+$/.test(phone)) phone == "" ? setPhone(null) : setPhone(phone) }} keyboardType='phone-pad' />
-                <MonoText>Account Type</MonoText>
-                <Picker
-                    selectedValue={accType}
-                    onValueChange={(itemValue) =>
-                        setAccType(itemValue)
-                    }
-                    style={styles.picker}>
-                    <Picker.Item label="User" value="User" />
-                    <Picker.Item label="Organiazation" value="Organization" />
-                </Picker>
-
+                <MonoText style={{ marginTop: "4%" }}>Account Type</MonoText>
+                <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
+                    <Picker
+                        selectedValue={accType}
+                        onValueChange={(itemValue) =>
+                            setAccType(itemValue)
+                        }
+                        style={styles.picker}>
+                        <Picker.Item label="User" value="User" />
+                        <Picker.Item label="Organiazation" value="Organization" />
+                    </Picker>
+                </View>
                 <Text style={{ color: "#fa163f" }}>{notFilled ? "Fill All Inputs" : null}</Text>
                 <Text style={{ color: "#fa163f" }}>{emailError ? "Invalid Email" : null}</Text>
 
 
             </View>
 
-            <View style={{ marginLeft: '10%', marginRight: '10%' }}>
-                <CustBtn onpress={registerUSer} title="Create" BgColor={Colors.primaryBtnBG} />
+            <View style={{ marginLeft: '10%', marginRight: '8%', alignItems: "center" }}>
+                <CustBtn onpress={registerUSer} title="Create" color="#fff" style={{ backgroundColor: "#18F879" }} />
             </View>
 
         </View>
@@ -142,16 +140,8 @@ const styles = StyleSheet.create({
     },
     picker: {
         height: 50,
-        backgroundColor: '#fff',
         color: '#18F879',
         fontFamily: 'Segoe UI',
         fontWeight: '600',
-        borderRadius: 5,
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        },
     }
 });

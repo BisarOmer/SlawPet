@@ -161,11 +161,11 @@ Adoption.deleteAdoption = (req, result) => {
             return;
         }
         else {
-            fs.unlink('./images/'+req.body.img, function (err) {
+            fs.unlink('./images/' + req.body.img, function (err) {
                 if (err) throw err;
                 console.log('File deleted!');
             });
-            
+
             result(null, { "message": "deleted" });
         }
     }
@@ -174,7 +174,7 @@ Adoption.deleteAdoption = (req, result) => {
 };
 
 Adoption.ask = (req, result) => {
-    sql.query("insert into adopted (account_id,adoption_id,org_id) values(?,?,?); update adoption set status=1 where adoption_id=?", [req.decoded.id, req.body.Adoption_id, req.body.org_id, req.body.Adoption_id], (err, res) => {
+    sql.query("insert into adopted (adopter_id,adoption_id,saver_id) values(?,?,?); update adoption set status=1 where adoption_id=?", [req.decoded.id, req.body.Adoption_id, req.body.saver_id, req.body.Adoption_id], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -187,5 +187,33 @@ Adoption.ask = (req, result) => {
     );
 
 };
+
+Adoption.count = (req, result) => 
+{
+    sql.query("SELECT COUNT(account_id) as NumAdoptions FROM adoption WHERE account_id=?",req.body.account_id, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        else{
+            result(null, res[0]);
+        }
+    });
+}
+
+Adoption.countAdopted = (req, result) => {
+    sql.query("SELECT COUNT(saver_id) as NumAdopted FROM adopted WHERE saver_id = ? and status !=1",req.body.account_id, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        else{
+             result(null, res[0]);
+        }
+       
+    });
+}
 
 module.exports = Adoption;

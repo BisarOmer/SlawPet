@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Linking } from 'react-native'
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
@@ -136,20 +137,31 @@ export default class ViewAsk extends React.Component {
     render() {
         const viewAsk = this.state.AskData
         return (
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+            <View style={styles.container} contentContainerStyle={styles.contentContainer}>
 
-                <View style={{ padding: '5%' }}>
-                    <Image
-                        style={{ width: 150, height: 150, alignSelf: 'center' }}
-                        borderRadius={150}
-                        source={{ uri: imageuri + viewAsk.profile }}
-                    />
-                    <MonoText style={{ alignSelf: 'center' }}>{viewAsk.asker}</MonoText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+
+                    <View style={{ padding: '5%' }}>
+                        <Image
+                            style={{ width: 100, height: 100, alignSelf: 'center' }}
+                            borderRadius={150}
+                            source={{ uri: imageuri + viewAsk.profile }}
+                        />
+                        <MonoText style={{ alignSelf: 'center' }}>{viewAsk.asker}</MonoText>
+                    </View>
+
+                    <View style={{justifyContent: 'space-between',alignItems: 'flex-start',alignContent: 'flex-start',}}>
+                        <MonoText >{viewAsk.phoneNumber}</MonoText>
+                        <CustBtn title="Call" color="#fff" style={{ backgroundColor: "#18F879" ,}} onpress={() => { Linking.openURL(`tel:${viewAsk.phoneNumber}`) }} />
+                    </View>
+
+
                 </View>
 
+
                 <View style={{ padding: '5%' }}>
-                    <MonoText style={{ alignSelf: 'center' }}>Adobt</MonoText>
-                    <TouchableOpacity style={{ marginTop: 20 }} onPress={() => this.props.navigation.navigate('View Adoption', { Adoption_id: this.state.Adoption_id, Token: this.state.Token, TypeUser: "owner" })}>
+
+                    <TouchableOpacity style={{ marginTop: 20 }} onPress={() => this.props.navigation.navigate('Adoption', { Adoption_id: this.state.Adoption_id, Token: this.state.Token, TypeUser: "owner" })}>
                         <View>
                             <Image
                                 style={{ height: 160, width: 150, backgroundColor: "#ccf0e1", alignSelf: 'center' }}
@@ -160,14 +172,15 @@ export default class ViewAsk extends React.Component {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={{ flexDirection: "row", flexWrap: "nowrap", alignItems: "center", justifyContent: "space-around", marginTop: 20 }}>
-                        <CustBtn title="Give" BgColor={Colors.primaryBtnBG} onpress={this.give} />
-                        <CustBtn title="Cancel" BgColor="#ff5151" onpress={this.cancel} />
+                    <View style={{ marginTop: "10%", alignItems: "center" }}>
+                        <CustBtn title="Give" color="#fff" style={{ backgroundColor: "#18F879" }} onpress={this.give} />
+                        <CustBtn title="Cancel" style={{ marginTop: "25%" }} onpress={this.cancel} />
                     </View>
-                    <MonoText style={{ alignSelf: 'center' }}>Contact:  {viewAsk.phoneNumber}</MonoText>
+
+
                 </View>
 
-            </ScrollView>
+            </View>
         );
 
     }

@@ -14,7 +14,7 @@ import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 
 
-export default class Adobt extends Component {
+export default class AdobtionByAccount extends Component {
 
     constructor(props){
         super(props);
@@ -74,7 +74,7 @@ export default class Adobt extends Component {
                     itemDimension={150}
                     items={this.state.Adoptions}
                     renderItem={({ item }) => (
-                        <TouchableOpacity  onPress={() => this.props.navigation.navigate('View Adoption', {Adoption_id :item.adoption_id, Token:this.state.Token, TypeUser:"user"})}>
+                        <TouchableOpacity  onPress={() => this.props.navigation.navigate('Adoption', {Adoption_id :item.adoption_id, Token:this.state.Token, TypeUser:"user"})}>
                             <View>
                                 <Image
                                     style={{ height: 160, width: 150, backgroundColor: "#ccf0e1" }}

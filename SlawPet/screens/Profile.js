@@ -34,9 +34,12 @@ export default class Profile extends Component {
             Token: '',
             AccountType: '',
             AccountData: {},
+            Account_id: "",
             OrganizationData: {},
             Adoptions: [],
             refreshing: false,
+            NumberAdoptions: "",
+            NumberAdopted: "",
 
         };
 
@@ -53,14 +56,16 @@ export default class Profile extends Component {
         try {
             var value = await AsyncStorage.getItem('AccountType');
             var token = await AsyncStorage.getItem('auth_Token');
-            this.setState({ Token: token });
-            this.setState({ AccountType: value });
+            var id = await AsyncStorage.getItem('Acco_id');
+            this.setState({ Account_id: id, Token: token, AccountType: value });
         } catch (error) {
             console.log(error)
         }
 
         this.fetchData();
         this.fetchAdoptions();
+        await this.countAdopted();
+        await this.countAdoptions();
     };
 
     fetchData = async () => {
@@ -123,6 +128,50 @@ export default class Profile extends Component {
             });
     }
 
+    countAdoptions = async () => {
+        fetch(api + '/count',
+            {
+                method: 'POSt',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    account_id: this.state.Account_id
+                })
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({ NumberAdoptions: responseJson.NumAdoptions });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    countAdopted = async () => {
+        fetch(api + '/countAdopted',
+            {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    account_id: this.state.Account_id
+                })
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                
+                this.setState({ NumberAdopted: responseJson.NumAdopted });
+
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     _onRefresh = () => {
         this.setState({ refreshing: true });
         this.fetchData().then(() => {
@@ -177,17 +226,22 @@ export default class Profile extends Component {
                 <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', marginLeft: "10%" }}>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', alignContent: 'flex-start', }}>
+
                         <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: "10%" }}>
                             <Text style={{ marginTop: 15 }}>Adoptions</Text>
-                            <MonoText>15</MonoText>
+                            <MonoText>{this.state.NumberAdoptions}</MonoText>
                         </View>
+
                         <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: "10%" }}>
-                            <Text style={{ marginTop: 15 }}>Adopted</Text>
-                            <MonoText >5</MonoText>
+                            <TouchableOpacity style={{ alignItems: 'center' }}>
+                                <Text style={{ marginTop: 15 }}>Adopted</Text>
+                                <MonoText >{this.state.NumberAdopted}</MonoText>
+                            </TouchableOpacity>
                         </View>
+
                     </View>
 
-                    <TouchableOpacity style={styles.uploadimg}  onPress={() => {this.props.navigation.navigate('Edit Profile')}}>
+                    <TouchableOpacity style={styles.uploadimg} onPress={() => { this.props.navigation.navigate('Edit Profile') }}>
                         <Text>Edit Profile</Text>
                     </TouchableOpacity>
 
@@ -208,7 +262,7 @@ export default class Profile extends Component {
                         itemDimension={150}
                         items={this.state.Adoptions}
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('View Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "owner" })}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "owner" })}>
                                 <View>
                                     <Image
                                         style={{ height: 160, width: 150, backgroundColor: "#ccf0e1" }}
@@ -241,16 +295,16 @@ const styles = StyleSheet.create({
         alignContent: 'center',
     },
     uploadimg: {
-        width:180,
-        alignItems:"center",
+        width: 180,
+        alignItems: "center",
         marginTop: '8%',
         backgroundColor: '#fff',
         padding: 5,
         fontWeight: "600",
         fontSize: 18,
         borderRadius: 2,
-        borderWidth:1,
-        borderColor:"#000",
+        borderWidth: 1,
+        borderColor: "#000",
 
     },
 });

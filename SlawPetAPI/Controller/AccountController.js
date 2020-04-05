@@ -157,8 +157,7 @@ exports.upload = (req, res) => {
         else if(req.body.typeUpload=="/upload/Donate")
         sql.query("update organization set qrCode = ? where account_id = ?",[req.photo,req.decoded.id]);
         else if(req.body.typeUpload=="/upload/AdoptionImage")
-        sql.query("update adoption set img = ? where account_id = ?",[req.photo,req.decoded.id]);
-
+        sql.query("update adoption set img = ? where account_id = ? and adoption_id=(SELECT max(adoption.adoption_id) as id FROM adoption where adoption.account_id=?)",[req.photo,req.decoded.id,req.decoded.id]);
     } catch (err) {
         console.log(err.message);
         res.status(200).json({

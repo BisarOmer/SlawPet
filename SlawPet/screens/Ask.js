@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, FlatList,RefreshControl } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import { render } from 'react-dom';
+import { StyleSheet, View, TouchableOpacity, Image, FlatList, RefreshControl } from 'react-native';
+
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn';
 import Colors from '../constants/Colors';
 import { MonoText } from '../components/StyledText';
+
 import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
@@ -19,7 +19,7 @@ export default class Ask extends Component {
             Asks: [],
             Token: "",
 
-            messege:"",
+            messege: "",
 
             refreshing: false,
         }
@@ -40,10 +40,10 @@ export default class Ask extends Component {
         } catch (error) {
             console.log(error)
         }
-       await this.fetchData();
+        await this.fetchData();
     };
 
-    fetchData = async () => {  
+    fetchData = async () => {
         if (this.state.Token != undefined) {
             fetch(api + '/organization/adobted',
                 {
@@ -56,12 +56,12 @@ export default class Ask extends Component {
                 })
                 .then((response) => response.json())
                 .then((responseJson) => {
-                    if(!responseJson.status){
-                        this.setState({messege:responseJson.messege})
+                    if (!responseJson.status) {
+                        this.setState({ messege: responseJson.messege })
                     }
-                    else{
+                    else {
                         this.setState({ Asks: responseJson.res });
-                    }    
+                    }
                 })
                 .catch((error) => {
                     console.error(error);
@@ -84,21 +84,21 @@ export default class Ask extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <View >
-                    {this.state.messege!=""&&<MonoText>{this.state.messege}</MonoText>}
+                <View>
+                    {this.state.messege != "" && <MonoText>{this.state.messege}</MonoText>}
                     <FlatList
-                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/> }
-                    keyExtractor={item => String(item.adoption_id)}
+                        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh} />}
+                        keyExtractor={item => String(item.adoption_id)}
                         data={this.state.Asks}
                         renderItem={({ item }) =>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Ask Details', {Adoption_id :item.adoption_id,Token:this.state.Token})} >
-                                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Ask Details', { Adoption_id: item.adoption_id, Token: this.state.Token })} >
+                                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 , alignItems: 'center',}}>
                                     <Image
                                         style={{ width: 50, height: 50, }}
                                         borderRadius={100}
                                         source={{ uri: imageuri + item.profile }}
                                     />
-                                    <MonoText style={{ marginLeft:"4%" }}>{item.asker}</MonoText>
+                                    <MonoText style={{ marginLeft: "4%" }}>{item.asker}</MonoText>
                                 </View>
                             </TouchableOpacity>
                         }
@@ -108,7 +108,7 @@ export default class Ask extends Component {
             </View>
         );
     }
-    
+
 }
 
 const styles = StyleSheet.create({

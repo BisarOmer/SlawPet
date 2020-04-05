@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import { render } from 'react-dom';
+
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn';
 import Colors from '../constants/Colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Register from '../screens/Register';
+
 import { MonoText } from '../components/StyledText';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -50,7 +48,7 @@ export default class About extends Component {
     render() {
         const about = this.state.About
         return (
-            <ScrollView>
+            <ScrollView style={{backgroundColor:"#fff"}}>
                 <View style={styles.container}>
                     <MonoText>Address</MonoText>
                     <Text style={styles.info}>{about.address}</Text>

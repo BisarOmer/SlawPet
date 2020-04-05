@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { useState, useEffect } from 'react';
 import { AsyncStorage } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Picker, Alert } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn'
 import Colors from '../constants/Colors';
@@ -98,20 +96,19 @@ export default class AddAdoption extends Component {
         formData.append("typeUpload", routName);
 
         fetch(api + routName, {
-            body: formData,
+            
             method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'multipart/form-data',
                 'x-access-token': this.state.Token
-            }
+            },
+            body: formData,
         })
             .then(response => {
                 return response.json()
             })
             .then(response => {
-                console.log("upload succes", response);
-                alert("Upload success");
                 this.setState({ photo: "" });
 
             })
@@ -134,7 +131,7 @@ export default class AddAdoption extends Component {
 
 
 
-        if (name == "" || age == "" || gender == "" || city == "" || pet == "") {
+        if (name == "" || age == "" || gender == "" || city == "" || pet == ""||this.state.photo=="") {
             this.setState({ notFill: true });
         }
 
@@ -184,20 +181,18 @@ export default class AddAdoption extends Component {
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
                 <View style={{ padding: 20 }}>
-
-                    <Image
-                        style={{ height: 200, backgroundColor: "#ccf0e1" }}
-                        borderRadius={5}
-                        source={{ uri: imageuri + this.state.photo }} />
-
-                    <TouchableOpacity style={styles.uploadimg} onPress={() => { this.setState({ routName: "/upload/AdoptionImage" }); this.openImagePickerAsync(); }}>
-                        <Text>Upload a photo</Text>
+                    <TouchableOpacity onPress={() => { this.setState({ routName: "/upload/AdoptionImage" }); this.openImagePickerAsync(); }} >
+                        <Image
+                            style={{ height: 225,width:"100%", backgroundColor: "#ccf0e1" }}
+                            borderRadius={5}
+                            source={this.state.photo!=""?this.state.photo:null }
+                        />
                     </TouchableOpacity>
 
                     <CustTxtInput placeholder="Name" onChangeText={(name) => { this.setState({ name: name }) }} />
                     <CustTxtInput placeholder="Age" keyboardType='phone-pad' onChangeText={(age) => { this.setState({ age: age }) }} />
 
-                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5,marginTop:"5%" }}>
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, marginTop: "5%" }}>
                         <Picker
                             selectedValue={this.state.gender}
                             onValueChange={(itemValue) =>
@@ -209,7 +204,7 @@ export default class AddAdoption extends Component {
                         </Picker>
                     </View>
 
-                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5,marginTop:"5%" }}>
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, marginTop: "5%" }}>
                         <Picker
                             selectedValue={this.state.pet}
                             onValueChange={(itemValue) =>
@@ -224,7 +219,7 @@ export default class AddAdoption extends Component {
                         </Picker>
                     </View>
 
-                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5,marginTop:"5%" }}>
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, marginTop: "5%" }}>
                         <Picker
                             selectedValue={this.state.city}
                             onValueChange={(itemValue) =>
@@ -242,9 +237,9 @@ export default class AddAdoption extends Component {
                     <CustTxtInput placeholder="Write More" onChangeText={(content) => { this.setState({ content: content }) }}></CustTxtInput>
                 </View>
 
-                <View style={{ padding: 20 }}>
+                <View style={{ padding: 20 ,alignItems:"center"}}>
                     {this.state.notFill ? <Text style={{ color: "#fa163f" }}>Please Fill All Inputs</Text> : null}
-                    <CustBtn title="Post" onpress={this.postAdoption} BgColor={Colors.primaryBtnBG} />
+                    <CustBtn title="Post" color="#fff" onpress={this.postAdoption} style={{backgroundColor:Colors.primaryBtnBG}} />
                 </View>
             </ScrollView>
         );

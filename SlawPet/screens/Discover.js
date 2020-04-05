@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Picker, FlatList, Button, TouchableHighlightBase } from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import * as WebBrowser from 'expo-web-browser';
+import { Image, StyleSheet, TouchableOpacity, View, FlatList} from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
 import { MonoText } from '../components/StyledText';
 import { Ionicons } from '@expo/vector-icons';
 import { render } from 'react-dom';
@@ -11,7 +10,7 @@ import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 import imageuri from '../constants/imageuri';
 
-class Organizationes extends Component {
+class Discover extends Component {
 
     constructor(props) {
         super(props);
@@ -22,7 +21,6 @@ class Organizationes extends Component {
 
         }
     }
-
 
     componentDidMount = async () => {
         await this.fetchData();
@@ -91,8 +89,8 @@ class Organizationes extends Component {
                         extraData={this.state.refresh}
                         data={this.state.Organizations}
                         renderItem={({ item }) =>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Organization Profile', { id: item.account_id })} >
-                                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('View Profile', { id: item.account_id })} >
+                                <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 ,alignItems:"center"}}>
                                     <Image
                                         style={{ width: 50, height: 50, backgroundColor: "#ccf0e1" }}
                                         borderRadius={100}
@@ -111,7 +109,7 @@ class Organizationes extends Component {
     }
 };
 
-export default Organizationes
+export default Discover
 
 const styles = StyleSheet.create({
     container: {

@@ -1,6 +1,5 @@
 import { useLinking } from '@react-navigation/native';
 import { Linking } from 'expo';
-import Ask from '../screens/Ask';
 
 export default function(containerRef) {
   return useLinking(containerRef, {
@@ -13,7 +12,7 @@ export default function(containerRef) {
           Register: 'register',
           Continue: 'Continue',
           Profile:'profile',
-          Organizationes:'Organizatioin',
+          Discover:'Discover',
           ViewOrg:'ViewOrg',
           ViewAdobt:'Adobtion',
           Ask:'Ask',

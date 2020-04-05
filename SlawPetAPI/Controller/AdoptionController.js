@@ -131,4 +131,26 @@ exports.deleteAdoption=(req,res)=>{
 };
 
 
+exports.count=(req,res)=>{
+    AdoptionModel.count(req,(err,data)=>{
+        if(err){
+            res.send(console.log("error:",err))
+        }
+        else
+        res.send(data);
+    });   
+};
+
+
+exports.countAdopted=(req,res)=>{
+    AdoptionModel.countAdopted(req,(err,data)=>{
+        if(err){
+            res.send(console.log("error:",err))
+        }
+        else
+        res.send(data);
+    });   
+};
+
+
 

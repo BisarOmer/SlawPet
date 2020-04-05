@@ -9,7 +9,7 @@ import { MonoText } from './StyledText';
 export default function CustBtn(props, { navigation }) {
     return (
         <TouchableOpacity onPress={props.onpress} style={[props.style, styles.Btn]} >
-            <MonoText style={{color:props.color}}>{props.title}</MonoText>
+            <MonoText style={{color:props.color ,justifyContent: 'center', marginTop:"2%"}}>{props.title}</MonoText>
         </TouchableOpacity>
     );
 }
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         alignItems:"center",
         height: 40,
         width: 150,
-        borderRadius: 5,
+        borderRadius: 3,
     },
 
 });

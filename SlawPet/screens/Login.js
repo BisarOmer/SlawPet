@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Alert, SafeAreaView } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import { render } from 'react-dom';
+import { useState} from 'react';
+import { StyleSheet, Text, View, Alert, SafeAreaView } from 'react-native';
+
 import CustTxtInput from '../components/CustTxtInput';
 import CustBtn from '../components/CustBtn';
 import Colors from '../constants/Colors';
+
 import { AsyncStorage } from 'react-native';
 import api from '../constants/api';
 
-export default function LoginScreen({ navigation }) {
+export default function Login({ navigation }) {
 
 
 
@@ -115,10 +115,10 @@ export default function LoginScreen({ navigation }) {
 
 
 
-            <View style={{ marginTop: '6%', margin: '20%' }}>
-                <CustBtn title="Login" onpress={login} BgColor={Colors.primaryBtnBG} />
+            <View style={{ marginTop: '6%', margin: '20%',alignItems:"center" }}>
+                <CustBtn title="Login" onpress={login} color="#fff" style={{backgroundColor:"#18F879"}} />
                 <Text style={styles.normalText}>Create Account</Text>
-                <CustBtn title="Register" onpress={() => navigation.navigate('Register')} BgColor="#000" />
+                <CustBtn title="Register"  style={{backgroundColor:"#f1f3f4"}} onpress={() => navigation.navigate('Register')} BgColor="#000" />
             </View>
         </SafeAreaView>
     );
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Segoe UI',
-        fontWeight: '600',
+        fontWeight: '800',
         color: Colors.primaryTxtColor,
         fontSize: 35,
     },
