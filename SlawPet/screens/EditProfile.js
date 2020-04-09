@@ -257,7 +257,7 @@ export default class EditProfile extends Component {
 
     loggedOut() {
         this._deleteToken();
-        this.props.navigation.goBack();
+        this.props.navigation.push('Home');
     };
 
     componentDidMount = async () => {

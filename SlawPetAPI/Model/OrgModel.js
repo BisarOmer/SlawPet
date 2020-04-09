@@ -5,7 +5,7 @@ const Org=function(){
 };
 
 Org.about = (id, result) => {
-    sql.query("select org.account_id,address,certification,user.phoneNumber  from organization as org inner join user on Org.account_id=?", id, (err, res) => {
+    sql.query("select org.account_id,address,certification,user.account_id,user.phoneNumber  from organization as org inner join user on org.account_id=? and Org.account_id=user.account_id ", id, (err, res) => {
         if (err) {
             console.log("erroe: ", err)
             result(null, err);

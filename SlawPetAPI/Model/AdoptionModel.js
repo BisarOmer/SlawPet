@@ -10,7 +10,8 @@ const Adoption = function (adoption) {
     this.city = adoption.city;
     this.pet = adoption.pet;
     this.content = adoption.content;
-    date = Date(Date.now()).toString();
+    this.date = new Date().toISOString().slice(0,10);
+
 }
 
 

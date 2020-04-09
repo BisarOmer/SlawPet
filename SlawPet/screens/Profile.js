@@ -44,7 +44,6 @@ export default class Profile extends Component {
         };
 
         //retrve data and showing
-        this.showOrgData = this.showOrgData.bind(this);
         this.fetchData = this.fetchData.bind(this);
     }
 
@@ -86,9 +85,11 @@ export default class Profile extends Component {
             .catch((error) => {
                 console.error(error);
             });
+    };
 
-        if (this.state.AccountType == "Organization") {
-            fetch(api + '/me/org',
+    fetchAdoptions = async () => {
+        if (this.state.Token != null) {
+            fetch(api + '/myAdoptions',
                 {
                     method: 'GET',
                     headers: {
@@ -99,33 +100,13 @@ export default class Profile extends Component {
                 })
                 .then((response) => response.json())
                 .then((responseJson) => {
-                    this.setState({ OrganizationData: responseJson });
-                    this.setState({ newAddress: responseJson.address });
+                    this.setState({ Adoptions: responseJson });
                 })
                 .catch((error) => {
                     console.error(error);
                 });
 
         }
-    };
-
-    fetchAdoptions() {
-        fetch(api + '/myAdoptions',
-            {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'x-access-token': this.state.Token,
-                }
-            })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({ Adoptions: responseJson });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
     countAdoptions = async () => {
@@ -163,7 +144,7 @@ export default class Profile extends Component {
             })
             .then((response) => response.json())
             .then((responseJson) => {
-                
+
                 this.setState({ NumberAdopted: responseJson.NumAdopted });
 
             })
@@ -179,29 +160,6 @@ export default class Profile extends Component {
         });
     }
 
-    showOrgData() {
-
-        return (
-            <View style={styles.viewShadow}>
-
-                <CustTxtInputProfile placeholder={this.state.OrganizationData.address} onChangeText={(address) => { this.setState({ newAddress: address }) }} />
-                <View style={{ padding: 50 }}><CustBtn title="Update Address" onpress={this.updateAddress} BgColor={Colors.primaryBtnBG} /></View>
-
-                <MonoText style={{ color: "#000", alignSelf: 'center' }}>Certification</MonoText>
-                <TouchableOpacity onPress={() => { this.setState({ routName: "/upload/Certification" }); this.openImagePickerAsync() }}>
-                    <Image style={{ height: 200, backgroundColor: "#ccf0e1", margin: 10 }} borderRadius={5}
-                        source={{ uri: imageuri + this.state.OrganizationData.certification }} />
-                </TouchableOpacity>
-
-                <MonoText style={{ color: "#000", alignSelf: 'center' }}>Donate</MonoText>
-                <TouchableOpacity onPress={() => { this.setState({ routName: "/upload/Donate" }); this.openImagePickerAsync() }}>
-                    <Image style={{ height: 200, backgroundColor: "#ccf0e1", margin: 10 }} borderRadius={5}
-                        source={{ uri: imageuri + this.state.OrganizationData.qrCode }} />
-                </TouchableOpacity>
-            </View>
-        );
-
-    };
 
     componentDidMount = async () => {
         await this._retrieveData();
@@ -259,6 +217,7 @@ export default class Profile extends Component {
                     <FlatGrid
                         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh} />}
                         ListHeaderComponent={this.headers()}
+                        ListEmptyComponent={<MonoText>Empty</MonoText>}
                         itemDimension={150}
                         items={this.state.Adoptions}
                         renderItem={({ item }) => (

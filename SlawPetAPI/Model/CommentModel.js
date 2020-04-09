@@ -4,7 +4,8 @@ const Comment = function (comment) {
     this.account_id = comment.account_id;
     this.adoption_id = comment.adoption_id;
     this.content = comment.content;
-    this.date = Date.now();
+    this.date = new Date().toJSON().slice(0, 19).replace('T', ' ');
+
 };
 
 Comment.postComment = (comment, result) => {

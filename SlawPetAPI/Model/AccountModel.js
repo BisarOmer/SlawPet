@@ -9,7 +9,7 @@ const Account = function (account) {
   this.profile = account.profile;
   this.phoneNumber = account.phoneNumber;
   this.accType = account.accType;
-  this.date = Date(Date.now()).toString();
+  this.date = new Date().toISOString().slice(0,10);
 }
 
 // create user 
@@ -33,9 +33,26 @@ Account.create = (newAccount, result) => {
           if (err) {
             console.log("error: ", err);
             result(err, null);
-            return;
+            return; 
           }
-          result(null, { id: res.insertId, ...newAccount });
+          
+          else if(newAccount.accType=="Organization"){
+            sql.query("INSERT INTO  organization (account_id) values (?)",res.insertId,(err,res)=>{
+              if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
+              else{
+                result(null, {"status":true,"message":"successfully Organization Account Created "});
+              }
+            })   
+          }
+
+          else{
+            result(null,{"status":true,"message":"successfully Account Created"})
+          }
+
         });
 
       }

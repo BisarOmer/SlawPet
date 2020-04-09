@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList, } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Picker, FlatList, Platform, ActionSheetIOS } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
 import api from '../constants/api';
@@ -169,6 +169,91 @@ export default class Home extends Component {
             });
     }
 
+    cityOptions() {
+
+        ActionSheetIOS.showActionSheetWithOptions(
+            {
+                options: ['Cancel', 'Sulaymaniyah', 'Hawler', 'Duhok', 'Halabja', 'Kirkuk', 'All'],
+                destructiveButtonIndex: 6,
+                cancelButtonIndex: 0,
+                title: "Filter By City"
+            },
+            (buttonIndex) => {
+                this.setState({ city: options[buttonIndex] })
+            },
+        );
+
+    }
+
+    petOptions() {
+
+        ActionSheetIOS.showActionSheetWithOptions(
+            {
+                options: ['Cancel', 'Cat', 'Dog', 'Bird', 'Rabbit', 'Other', 'All'],
+                destructiveButtonIndex: 6,
+                cancelButtonIndex: 0,
+                title: "Filter By Pet"
+            },
+            (buttonIndex) => {
+                this.setState({ pet: options[buttonIndex] })
+            },
+        );
+
+    }
+
+    DropDownByPlatform() {
+        if (Platform.OS === 'ios') {
+            return (
+                <View>
+                    <MonoText>City</MonoText>
+                    <Button onPress={this.cityOptions} title="All" />
+                    <MonoText>Pet</MonoText>
+                    <Button onPress={this.petOptions} title="All" />
+                </View>
+            )
+        }
+        else {
+            return (
+                <View>
+                    <MonoText>City</MonoText>
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
+                        <Picker
+                            style={styles.picker}
+                            selectedValue={this.state.city}
+                            onValueChange={(itemValue) =>
+                                this.setState({ city: itemValue })
+                            }
+                        >
+                            <Picker.Item label="All" value="All" />
+                            <Picker.Item label="Sulaymaniyah" value="Sulaymaniyah" />
+                            <Picker.Item label="Hawler" value="Hawler" />
+                            <Picker.Item label="Duhok" value="Duhok" />
+                            <Picker.Item label="Halabja" value="Halabja" />
+                            <Picker.Item label="Kirkuk" value="Kirkuk" />
+                        </Picker>
+                    </View>
+                    <MonoText>Pet</MonoText>
+                    <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
+                        <Picker
+                            style={styles.picker}
+                            selectedValue={this.state.pet}
+                            onValueChange={(itemValue) =>
+                                this.setState({ pet: itemValue })
+
+                            }>
+                            <Picker.Item label="All" value="All" />
+                            <Picker.Item label="Cat" value="Cat" />
+                            <Picker.Item label="Dog" value="Dog" />
+                            <Picker.Item label="Bird" value="Bird" />
+                            <Picker.Item label="Rabbit" value="Rabbit" />
+                            <Picker.Item label="Other" value="Other" />
+                        </Picker>
+                    </View>
+                </View>
+            );
+        }
+    }
+
     componentWillUnmount() {
         this._unsubscribe();
     }
@@ -177,75 +262,42 @@ export default class Home extends Component {
         const adoptions = this.state.adoptions
         return (
             <SafeAreaView style={styles.container}>
-                    <FlatList
-                        ListHeaderComponent={
-                            <View style={{ marginBottom: '2%',backgroundColor:"#fff",padding: "4%", }}>
-                                <MonoText>City</MonoText>
-                                <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
-                                    <Picker
-                                        style={styles.picker}
-                                        selectedValue={this.state.city}
-                                        onValueChange={(itemValue) =>
-                                            this.setState({ city: itemValue })
-                                        }
-                                    >
-                                        <Picker.Item label="All" value="All" />
-                                        <Picker.Item label="Sulaymaniyah" value="Sulaymaniyah" />
-                                        <Picker.Item label="Hawler" value="Hawler" />
-                                        <Picker.Item label="Duhok" value="Duhok" />
-                                        <Picker.Item label="Halabja" value="Halabja" />
-                                        <Picker.Item label="Kirkuk" value="Kirkuk" />
-                                    </Picker>
+                <FlatList
+                    ListHeaderComponent={
+                        <View style={{ marginBottom: '2%', backgroundColor: "#fff", padding: "4%", }}>
+                            {this.DropDownByPlatform()}
+                        </View>
+                    }
+                    keyExtractor={item => String(item.adoption_id)}
+                    data={adoptions}
+                    renderItem={({ item }) => (
+                        <View style={styles.post}>
+                            <TouchableOpacity style={{ margin: '2%' }}>
+                                <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                                    <Image
+                                        style={{ width: 50, height: 50, backgroundColor: "#ccf0e1" }}
+                                        borderRadius={100}
+                                        source={{ uri: imageuri + item.profile }}
+                                    />
+                                    <MonoText style={{ marginLeft: "4%" }}>{item.owner}</MonoText>
                                 </View>
-                                <MonoText>Pet</MonoText>
-                                <View style={{ backgroundColor: "#f7f7f7", borderRadius: 5, }}>
-                                    <Picker
-                                        style={styles.picker}
-                                        selectedValue={this.state.pet}
-                                        onValueChange={(itemValue) =>
-                                            this.setState({ pet: itemValue })
+                            </TouchableOpacity>
 
-                                        }>
-                                        <Picker.Item label="All" value="All" />
-                                        <Picker.Item label="Cat" value="Cat" />
-                                        <Picker.Item label="Dog" value="Dog" />
-                                        <Picker.Item label="Bird" value="Bird" />
-                                        <Picker.Item label="Rabbit" value="Rabbit" />
-                                        <Picker.Item label="Other" value="Other" />
-                                    </Picker>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "user" })}>
+                                <View>
+                                    <Image
+                                        style={{ height: 220, backgroundColor: "#ccf0e1" }}
+                                        borderRadius={5}
+                                        source={{ uri: imageuri + item.img }}
+                                    />
+                                    <MonoText>{item.title}</MonoText>
                                 </View>
-                            </View>
-                        }
-                        keyExtractor={item => String(item.adoption_id)}
-                        data={adoptions}
-                        renderItem={({ item }) => (
-                            <View style={styles.post}>
-                                <TouchableOpacity style={{ margin: '2%' }}>
-                                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                                        <Image
-                                            style={{ width: 50, height: 50, backgroundColor: "#ccf0e1"  }}
-                                            borderRadius={100}
-                                            source={{ uri: imageuri + item.profile }}
-                                        />
-                                        <MonoText style={{ marginLeft: "4%" }}>{item.owner}</MonoText>
-                                    </View>
-                                </TouchableOpacity>
+                                <Text>{item.content}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                />
 
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Adoption', { Adoption_id: item.adoption_id, Token: this.state.Token, TypeUser: "user" })}>
-                                    <View>
-                                        <Image
-                                            style={{ height: 220, backgroundColor: "#ccf0e1" }}
-                                            borderRadius={5}
-                                            source={{ uri: imageuri + item.img }}
-                                        />
-                                        <MonoText>{item.title}</MonoText>
-                                    </View>
-                                    <Text>{item.content}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    />
-                
             </SafeAreaView >
         );
     }
@@ -256,7 +308,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "column",
-        backgroundColor:"#F0F2F5",
+        backgroundColor: "#F0F2F5",
 
     },
     picker: {
@@ -266,7 +318,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     post: {
-        padding:"4%",
+        padding: "4%",
         marginTop: "2%",
         backgroundColor: "#fff",
     }
