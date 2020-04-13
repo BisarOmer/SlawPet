@@ -4,6 +4,7 @@ module.exports = function (app) {
   const AdoptionController = require("./Controller/AdoptionController");
   const OrgController = require("./Controller/OrgController");
   const CommentController = require("./Controller/CommmetnController");
+  const AdminController = require("./Controller/AdminController");
   const authToken = require("./Config/AuthToken");
 
 
@@ -88,5 +89,21 @@ module.exports = function (app) {
   app.post("/comment",authToken.authToken, CommentController.postComment);
   app.get("/comment/:adoption_id", CommentController.getCommentByAdoption);
   app.delete("/comment/",authToken.authToken, CommentController.deleteComment);
+
+
+
+
+
+  //Admin
+  app.post("/signinAdmin",AdminController.signin);
+  app.get("/userAdmin",AdminController.users);
+  app.post("/disableAccount",authToken.authToken,AdminController.disableAccount);
+  app.post("/enableAccount",authToken.authToken,AdminController.enableAccount);
+  app.delete("/deleteAdoption",authToken.authToken,AdminController.deleteAdoption);
+  app.post("/dashboard",authToken.authToken,AdminController.dashboard);
+
+
+
+
 
 };

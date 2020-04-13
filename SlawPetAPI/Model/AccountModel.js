@@ -63,7 +63,7 @@ Account.create = (newAccount, result) => {
 };
 
 Account.OrgAll = result => {
-  sql.query("SELECT user.account_id,name,profile FROM `user` inner join organization as org on user.account_id=org.account_id ORDER BY name  ASC", (err, res) => {
+  sql.query("SELECT user.account_id,name,profile,disable FROM `user` inner join organization as org on user.account_id=org.account_id ORDER BY name  ASC", (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -107,7 +107,7 @@ Account.signin = (req, result) => {
   var email = req.body.email;
 
   if (email != undefined && password != undefined) {
-    sql.query("select account_id,accType from user where email = ? and password = ?", [email, password], (err, res) => {
+    sql.query("select account_id,accType from user where email = ? and password = ? and disable !=1", [email, password], (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(null, err);
